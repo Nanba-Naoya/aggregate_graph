@@ -1,0 +1,7 @@
+create_table "categories", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  t.bigint "category_id"
+  t.string "name"
+  t.datetime "created_at"
+  t.datetime "updated_at"
+  t.integer  "user_id"
+end
