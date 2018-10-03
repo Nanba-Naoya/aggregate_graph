@@ -1,7 +1,7 @@
 create_table "categories", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-  t.bigint "category_id"
-  t.string "name"
-  t.datetime "created_at"
-  t.datetime "updated_at"
-  t.integer  "user_id"
+  t.bigint "category_id", null: false
+  t.string "name", null: false
+  t.datetime "created_at", null: false
+  t.datetime "updated_at", null: false
+  t.integer  "user_id", null: false
 end
