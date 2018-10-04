@@ -1,7 +1,0 @@
-create_table "times", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-  t.string "time", null: false
-  t.bigint "times_category_id", null: false
-  t.datetime "created_at", null: false
-  t.datetime "updated_at", null: false
-  t.integer  "user_id", null: false
-end
