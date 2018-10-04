@@ -1,2 +1,0 @@
-require 'categories.schema'
-require 'times.schema'
