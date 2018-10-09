@@ -7,4 +7,21 @@
 <div class="graph" style="text-align:center">
     グラフ表示
 </div>
+<script type="text/javascript"></script>
+<div class="container" style="width:100%">
+    <canvas id="myChart"></canvas>
+</div>
 
+<script>
+    var ctx = document.getElementById("myChart").getContext('2d');
+    var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['8/26','8/27','8/28','8/29','8/30'],
+        datasets: [{
+          label: '時間',
+          data: [12, 19, 3, 17, 28, 24, 7]
+        }]
+      }
+    });
+    </script>
