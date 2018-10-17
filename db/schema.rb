@@ -20,7 +20,7 @@ ActiveRecord::Schema.define(version: 0) do
     t.integer "user_id", null: false
   end
 
-  create_table "times", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "work_times", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "time", null: false
     t.bigint "times_category_id", null: false
     t.datetime "created_at", null: false

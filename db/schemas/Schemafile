@@ -1,2 +1,2 @@
 require 'categories.schema'
-require 'times.schema'
+require 'work_times.schema'
