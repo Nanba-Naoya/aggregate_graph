@@ -11,5 +11,9 @@ module Api::V1
       render json: @categories
     end
 
+    def create
+      @categoties = Category.new(category_params)
+      @categories.save!
+    end
   end
 end

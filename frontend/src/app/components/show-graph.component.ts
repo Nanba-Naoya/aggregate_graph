@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
-
+import { Http } from '@angular/http';
 import { Chart } from 'chart.js';
 
 @Component({
@@ -9,15 +9,15 @@ import { Chart } from 'chart.js';
 })
 export class ShowGraphComponent {
   title = 'frontend';
+  categories;
 
   @ViewChild('myChart') ref: ElementRef;
 
   context: CanvasRenderingContext2D;
   chart: Chart;
-  barNum = 6;
-  labels = new Array(this.barNum);
 
-  ngOnInit() {
+  ngOnInit(http: Http) {
+
     this.context = (<HTMLCanvasElement>this.ref.nativeElement).getContext('2d');
     this.draw('pie');
   }
@@ -26,19 +26,16 @@ export class ShowGraphComponent {
     this.chart = new Chart(this.context, {
       type: a,
       data: {
-        labels: ['8/26','8/27','8/28','8/29','8/30','8/31','9/1'],
+        labels: ['8/26','8/27','8/28','8/29'],
         datasets: [{
           label: 'æ™‚é–“',
           backgroundColor:[
             "#2ecc71",
             "#3498db",
             "#95a5a6",
-            "#9b59b6",
-            "#f1c40f",
-            "#e74c3c",
-            "#34495e"
+            "#9b59b6"
           ],
-          data: [12, 19, 3, 17, 28, 24, 7]
+          data: [0.5, 4, 2.5, 1]
         }]
       }
     });
