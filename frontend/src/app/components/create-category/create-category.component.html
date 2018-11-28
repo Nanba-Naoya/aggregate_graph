@@ -1,0 +1,10 @@
+
+<div class="parent">カテゴリ入力
+    <form class="form" [formGroup]="form">
+      <div>
+        <input formControlName="title" type="text" class="form-control" placeholder="カテゴリを入力">
+        <button type="button" (click)=onCreate()>追加</button>
+      </div>
+    </form>
+    <button type="button" routerLink="/input-date">戻る</button>
+  </div>

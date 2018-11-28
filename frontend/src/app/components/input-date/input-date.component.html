@@ -1,0 +1,34 @@
+<div class="parent">入力
+  <form class="form" [formGroup]="form">
+    <div>
+      <!--<input formControlName="name" type="text" class="form-control" placeholder="カテゴリを入力"><br>-->
+      <select formControlName="work_time" class="work_time" (change)="onChangeCategory($event)">
+        <option class="category-select" [value]="null">
+          カテゴリを選択
+        </option>
+        <option class="category-list" *ngFor="let category of categories" [value]="category.id">
+          {{ category.title }}
+        </option>
+      </select>
+      <select formControlName="hour" class="hour" (change)="onChangeHour($event)">
+        <option class="hour-select" [value]="null">
+          時間を選択
+        </option>
+        <option class="hour-list" *ngFor="let work_time_hour of work_times_hour" [value]="work_time_hour.hour">
+          {{ work_time_hour.hour }}時間
+        </option>
+      </select>
+      <select formControlName="minute" class="minute" (change)="onChangeMinute($event)">
+        <option class="hour-select" [value]="null">
+          分を選択
+        </option>
+        <option class="minute-list" *ngFor="let work_time_minute of work_times_minute" [value]="work_time_minute.minute">
+          {{ work_time_minute.minute }}分
+        </option>
+      </select> 
+      <button type="button" (click)=onCreate()>保存</button>
+    </div>
+  </form>
+  <button routerLink="/create-category">カテゴリの追加</button>
+  <button type="button" routerLink="/select-show-type">グラフ表示</button>
+</div>

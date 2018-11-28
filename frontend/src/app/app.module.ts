@@ -1,17 +1,26 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { HttpModule } from '@angular/http'
+import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 import { AppComponent } from './app.component';
 import { TopMenuComponent } from './components/top-menu.component';
-import { ShowGraphComponent } from './components/show-graph.component';
-import { InputDataComponent } from './components/input-data.component';
+import { ShowGraphComponent } from './components/show-graph/show-graph.component';
+import { InputDateComponent } from './components/input-date/input-date.component';
+import { CreateCategoryComponent } from './components/create-category/create-category.component';
+import { SelectShowTypeComponent} from './components/select-show-type/select-show-type.component'
+
+import { InputDateService } from './components/services/input-date.service';
+import { CreateCategoryService } from './components/services/create-category.service';
+import { ShowGraphService } from './components/services/show-graph.service';
 
 export const AppRoutes = [
   {path: "", component: TopMenuComponent},
   {path: "show", component: ShowGraphComponent},
-  {path: "input-data", component: InputDataComponent},
+  {path: "input-date", component: InputDateComponent},
+  {path: "create-category", component: CreateCategoryComponent},
+  {path: "select-show-type", component: SelectShowTypeComponent}
 ]
 
 @NgModule({
@@ -19,14 +28,22 @@ export const AppRoutes = [
     AppComponent,
     ShowGraphComponent,
     TopMenuComponent,
-    InputDataComponent
+    InputDateComponent,
+    CreateCategoryComponent,
+    SelectShowTypeComponent
   ],
   imports: [
-    HttpModule,
+    HttpClientModule,
     BrowserModule,
+    FormsModule,
+    ReactiveFormsModule,
     RouterModule.forRoot(AppRoutes)
   ],
-  providers: [],
+  providers: [
+    InputDateService,
+    CreateCategoryService,
+    ShowGraphService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
