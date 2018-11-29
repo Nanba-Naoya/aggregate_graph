@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, Input } from '@angular/core';
 import { Chart } from 'chart.js';
 import { FormGroup, FormControl } from '@angular/forms';
 
@@ -13,10 +13,13 @@ import { WorkTime } from '../work_time';
   providers: [ShowGraphService]
 })
 export class ShowGraphComponent {
+  @Input() month: [];
+  @Input() day: [];
   title = 'frontend';
   category: Category;
   work_time: WorkTime;
   form: FormGroup;
+  response;
 
   @ViewChild('myChart') ref: ElementRef;
 
@@ -34,14 +37,14 @@ export class ShowGraphComponent {
     this.showGraphService.getCategories().subscribe((response) => {
       this.category = response;
     })
-    this.showGraphService.getWorkTimes().subscribe((response) =>{
-      this.work_time = response;
-    })
+   
     this.draw('pie');
   }
 
-  onChangeCategory($event){
-    $event.form.value
+  getCategoryWorkTimes(){
+    this.showGraphService.getCategories().subscribe((response) => {
+      this.response = response;
+    })
   }
 
   draw(a) {

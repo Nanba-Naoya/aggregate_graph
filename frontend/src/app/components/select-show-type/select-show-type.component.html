@@ -1,14 +1,70 @@
-<!--<div class="parent">入力
+<button type="button" class="graph-button" (click)=onChangegraph()>グラフを表示する</button>
+<button type="button" class="category-button" (click)=onChangecategory()>カテゴリごとに表示する</button>
+<div class="select-type" *ngIf="graph_flag">
   <form class="form" [formGroup]="form">
-    <select formControlName="" class="work_time" (change)="onChangeCategory($event)">
-      <option class="category-select" [value]="null">
-      </option>
-      <option class="category-list" *ngFor="let category of categories" [value]="category.id">
-        {{ category.title }}
-      </option>
-    </select>
-    <div class="select-type" [ngSwitch]=>
-    <button routerLink="/create-category">カテゴリの追加</button>
-    <button type="button" routerLink="/select-show-type">グラフ表示</button>
-  </div>-->
-<button routerLink="/show">表示</button>
+    <div>
+      <select formControlName="month" class="month" (change)="onChangeMonth($event)">
+        <option class="month-select" [value]="null">
+          月を選択
+        </option>
+        <option class="month-list" *ngFor="let month of all_month" [value]="month">
+          {{ month }}月
+        </option>
+      </select>
+      <select formControlName="day" class="day" (change)="onChangeday($event)">
+        <option class="day-select" [value]="null">
+          日を選択
+        </option>
+        <option class="day-list" *ngFor="let day of all_day" [value]="day">
+          {{ day }}日
+        </option>
+      </select><br>
+      <button type="button" (click)=onShowNomalgraph()>表示</button>
+    </div>
+  </form>
+  <div class="select-date" *ngIf="change">
+    <app-show-graph
+    [month]="month"
+    [day]="day">
+  </app-show-graph>
+  </div>
+  </div>
+
+  <div class="select-type" *ngIf="category_flag">
+    カテゴリで集計
+    <form class="form" [formGroup]="form">
+      <div>
+        <select formControlName="category" class="category" (change)="onSelectCategory($event)">
+          <option class="category-select" [value]="null">
+            カテゴリを選択
+          </option>
+          <option class="category-list" *ngFor="let category of categories" [value]="category.title">
+            {{ category.title }}
+          </option>
+        </select>
+        <select formControlName="month" class="month" (change)="onChangeMonth($event)">
+          <option class="month-select" [value]="null">
+            月を選択
+          </option>
+          <option class="month-list" *ngFor="let month of all_month" [value]="month">
+            {{ month }}月
+          </option>
+        </select>
+        <select formControlName="day" class="day" (change)="onChangeday($event)">
+          <option class="day-select" [value]="null">
+            日を選択
+          </option>
+          <option class="day-list" *ngFor="let day of all_day" [value]="day">
+            {{ day }}日
+          </option>
+        </select>
+      </div>
+    </form>
+    <button type="button" (click)=onChangedate()>表示</button>
+    <div class="select-date" *ngIf="change">
+      <app-show-graph
+        [month]="month"
+        [day]="day">
+      </app-show-graph>
+    </div>
+  </div>
