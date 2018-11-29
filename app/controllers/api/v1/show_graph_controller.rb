@@ -10,7 +10,7 @@ module Api::V1
 
     def select_work_time
       user_id = 1111
-      params[:id] == 1 ? work_times = WorkTime.where("user_id = #{user_id} and created_at like ") : 
+      params[:id] == "1" ? work_times = WorkTime.where("user_id = #{user_id} and created_at like '2018-11%'") : work_times = 'NG'
       work_times
     end
 

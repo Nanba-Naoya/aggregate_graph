@@ -20482,3 +20482,58 @@ Processing by Api::V1::CategoriesController#index as JSON
 Completed 200 OK in 30ms (Views: 16.0ms | ActiveRecord: 9.7ms)
 
 
+Started GET "/api/v1/show_graph/1" for 127.0.0.1 at 2018-11-29 19:07:10 +0900
+  [1m[35m (4.8ms)[0m  [1m[35mSET NAMES utf8,  @@SESSION.sql_mode = CONCAT(CONCAT(@@sql_mode, ',STRICT_ALL_TABLES'), ',NO_AUTO_VALUE_ON_ZERO'),  @@SESSION.sql_auto_is_null = 0, @@SESSION.wait_timeout = 2147483[0m
+  ↳ vendor/bundle/ruby/2.4.0/gems/activerecord-5.2.1/lib/active_record/log_subscriber.rb:98
+Processing by Api::V1::ShowGraphController#show as JSON
+  Parameters: {"id"=>"1"}
+Completed 500 Internal Server Error in 195ms (ActiveRecord: 0.0ms)
+
+
+  
+NameError (undefined local variable or method `work_times' for #<Api::V1::ShowGraphController:0x007f97cf964178>):
+  
+app/controllers/api/v1/show_graph_controller.rb:15:in `select_work_time'
+app/controllers/api/v1/show_graph_controller.rb:5:in `show'
+Started GET "/api/v1/show_graph/1" for 127.0.0.1 at 2018-11-29 19:08:31 +0900
+Processing by Api::V1::ShowGraphController#show as JSON
+  Parameters: {"id"=>"1"}
+  [1m[36mWorkTime Load (32.5ms)[0m  [1m[34mSELECT `work_times`.* FROM `work_times` WHERE (user_id = 1111)[0m
+  ↳ app/controllers/api/v1/show_graph_controller.rb:6
+Completed 200 OK in 68ms (Views: 12.2ms | ActiveRecord: 51.4ms)
+
+
+Started GET "/api/v1/show_graph/1" for 127.0.0.1 at 2018-11-29 19:08:55 +0900
+Processing by Api::V1::ShowGraphController#show as JSON
+  Parameters: {"id"=>"1"}
+  [1m[36mWorkTime Load (0.4ms)[0m  [1m[34mSELECT `work_times`.* FROM `work_times` WHERE (user_id = 1111)[0m
+  ↳ app/controllers/api/v1/show_graph_controller.rb:6
+Completed 200 OK in 21ms (Views: 8.5ms | ActiveRecord: 8.0ms)
+
+
+Started GET "/api/v1/show_graph/1" for 127.0.0.1 at 2018-11-29 19:10:40 +0900
+Processing by Api::V1::ShowGraphController#show as JSON
+  Parameters: {"id"=>"1"}
+  [1m[36mWorkTime Load (0.5ms)[0m  [1m[34mSELECT `work_times`.* FROM `work_times` WHERE (user_id = 1111)[0m
+  ↳ app/controllers/api/v1/show_graph_controller.rb:6
+Completed 200 OK in 38ms (Views: 10.9ms | ActiveRecord: 22.6ms)
+
+
+Started GET "/api/v1/show_graph/1" for 127.0.0.1 at 2018-11-29 19:11:08 +0900
+Processing by Api::V1::ShowGraphController#show as JSON
+  Parameters: {"id"=>"1"}
+  [1m[36mWorkTime Load (45.7ms)[0m  [1m[34mSELECT `work_times`.* FROM `work_times` WHERE (user_id = 1111 and created_at like '2018-11%')[0m
+  ↳ app/controllers/api/v1/show_graph_controller.rb:13
+  [1m[36mWorkTime Load (0.3ms)[0m  [1m[34mSELECT `work_times`.* FROM `work_times` WHERE (user_id = 1111)[0m
+  ↳ app/controllers/api/v1/show_graph_controller.rb:6
+Completed 200 OK in 76ms (Views: 2.9ms | ActiveRecord: 48.0ms)
+
+
+Started GET "/api/v1/show_graph/1" for 127.0.0.1 at 2018-11-29 19:11:52 +0900
+Processing by Api::V1::ShowGraphController#show as JSON
+  Parameters: {"id"=>"1"}
+  [1m[36mWorkTime Load (0.7ms)[0m  [1m[34mSELECT `work_times`.* FROM `work_times` WHERE (user_id = 1111 and created_at like '2018-11%')[0m
+  ↳ app/controllers/api/v1/show_graph_controller.rb:6
+Completed 200 OK in 16ms (Views: 9.0ms | ActiveRecord: 2.1ms)
+
+
