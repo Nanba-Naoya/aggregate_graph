@@ -30,7 +30,7 @@ module Api::V1
     def calctime
       hour = params[:work_time][:hour]
       minute = params[:work_time][:minute]
-      work_time = "#{hour}時間#{minute}分"
+      work_time = "#{hour}.#{minute}"
       work_time
     end
 

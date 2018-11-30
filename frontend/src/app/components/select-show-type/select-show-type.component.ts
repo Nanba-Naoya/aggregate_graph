@@ -57,6 +57,7 @@ export class SelectShowTypeComponent implements OnInit {
   }
 
   onShowNomalgraph(){
+    this.change = true;
     this.showGraphService.getWorkTimes(1).subscribe((response) => {
       this.work_time = response;
       console.log(this.work_time)

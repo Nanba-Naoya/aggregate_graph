@@ -6,7 +6,7 @@
         <option class="category-select" [value]="null">
           カテゴリを選択
         </option>
-        <option class="category-list" *ngFor="let category of categories" [value]="category.id">
+        <option class="category-list" *ngFor="let category of categories" [value]="category.category_id">
           {{ category.title }}
         </option>
       </select>
