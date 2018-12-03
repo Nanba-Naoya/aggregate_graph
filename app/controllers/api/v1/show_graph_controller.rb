@@ -1,8 +1,11 @@
 module Api::V1
   class ShowGraphController < ApplicationController
 
-    def show
+    def index
       work_times = select_work_time()
+      if (work_times.empty?)
+        work_times['error'] = true;
+      end
       render json: work_times
     end
 
@@ -10,35 +13,42 @@ module Api::V1
 
     def select_work_time
       user_id = 1111
-      params[:id] == "1" ? work_times = WorkTime.where("user_id = #{user_id} and created_at like '2018-11%'") : work_times = 'NG'
-      work_data = calctime(work_times)
-      work_data
+
+      params[:type_flag] == 'false' ? work_times = calctime(user_id) : work_times = calctime_category(user_id)
+      work_times
     end
 
-    def calctime(work_times)
-      #work_data = Hash.new { |hash, key| hash[key] = [] }
-      category = {}
-      work_data = []
+    def calctime(user_id)
+      category_id = []
+      work_times = {}
 
-      work_times.each do |work_time|
-        if category.include?("#{work_time['times_category_id']}")
-        end
-        category["#{work_time['times_category_id']}"] = work_time['time']
-        work_data = work_time
+      params[:day].present? ? work_dates = WorkTime.where("user_id = #{user_id} and created_at like '2018-#{change_time_notation(params[:month])}-#{change_time_notation(params[:day])}%'") : work_dates = WorkTime.where("user_id = #{user_id} and created_at like '2018-#{change_time_notation(params[:month])}%'")
+
+      work_dates.each do |work_date|
+        category_id.include?(work_date['category_id']) ?  category_id << work_date['category_id'] : category_id << work_date['category_id']
+        category_name = Category.find("#{work_date['category_id']}")
+        category_id.include?(work_date['category_id']) ? work_times["#{category_name['title']}"] = work_times["#{category_name['title']}"].to_f + work_date['time'].to_f : work_times["#{category_name['title']}"] = work_date['time'].to_f
       end
-      work_data
+      work_times
     end
 
+    def calctime_category(user_id)
+      work_times = {}
 
-
-    def category_month_work_time(work_times)
-      work_times = WorkTime.where("times_category_id = ")
+      params[:day].present? ? work_dates = WorkTime.where("user_id = #{user_id} and category_id = #{params[:category_id]} and created_at like '2018-#{change_time_notation(params[:month])}-#{change_time_notation(params[:day])}%'") : work_dates = WorkTime.where("user_id = #{user_id} and category_id = #{params[:category_id]} and created_at like '2018-#{change_time_notation(params[:month])}%'")
+      
+      work_dates.each do |work_date|
+        category_name = Category.find("#{work_date['category_id']}")
+        work_times["#{category_name['title']}"] = work_times["#{category_name['title']}"].to_f + work_date['time'].to_f
+      end
+      work_times
     end
 
-    def category_week_work_time()
-    end
-
-    def category_day_work_time(work_times)
+    def change_time_notation(times)
+      if  (times.to_i <= 9)  
+        times = "0#{times}"
+      end
+      times
     end
 
   end

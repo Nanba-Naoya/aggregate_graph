@@ -1,6 +1,4 @@
 <div class="graph">
-  <form>
+    <div class='error' *ngIf="error_flag">データがありません。</div>
     <canvas #myChart></canvas>
-  </form>
-<button type="button" routerLink="/input-date">戻る</button>
 </div>

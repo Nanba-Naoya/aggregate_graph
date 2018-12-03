@@ -4,7 +4,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :work_times, only: [:index, :show, :create], format: 'json'
       resources :categories, only: [:index, :show, :create], format: 'json'
-      resources :show_graph, only: [:show], format: 'json'
+      resources :show_graph, only: [:index], format: 'json'
       resources :work_times_hours, only: [:index], format: 'json'
       resources :work_times_minutes, only: [:index], format: 'json'
     end

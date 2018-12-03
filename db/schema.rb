@@ -14,7 +14,6 @@ ActiveRecord::Schema.define(version: 0) do
 
   create_table "categories", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "title", null: false
-    t.integer "category_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
@@ -22,7 +21,7 @@ ActiveRecord::Schema.define(version: 0) do
 
   create_table "work_times", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "time", null: false
-    t.bigint "times_category_id", null: false
+    t.bigint "category_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
@@ -33,7 +32,7 @@ ActiveRecord::Schema.define(version: 0) do
   end
 
   create_table "work_times_minutes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.bigint "minute", null: false
+    t.string "minute", null: false
   end
 
 end

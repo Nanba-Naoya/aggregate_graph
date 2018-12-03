@@ -3,6 +3,7 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { ShowGraphService } from '../services/show-graph.service';
 
 import { Category } from '../category';
+import { WorkTime } from '../work_time';
 
 @Component({
   selector: 'app-select-show-type',
@@ -17,12 +18,14 @@ export class SelectShowTypeComponent implements OnInit {
   yaer = new Date().getFullYear()
   max_day;
   all_day = [];
-  month = [];
-  day = [];
+  month;
+  day;
+  category_id;
   graph_flag = false;
   category_flag = false;
   change = false;
   work_time;
+  type_flag = false;
 
   constructor(private showGraphService: ShowGraphService) { 
     this.form = new FormGroup({
@@ -38,34 +41,28 @@ export class SelectShowTypeComponent implements OnInit {
     })
   }
 
+  onShowNomalgraph(){
+    this.change = true;
+  }
+
+  onShowCategorygraph(){
+    this.change = true;
+  }
+
   onSelectCategory($event){
-    $event.target.value
+    this.category_id = $event.target.value
   }
 
   onChangegraph(){
     this.category_flag = false;
     this.graph_flag = true;
+    this.type_flag = false;
   }
 
   onChangecategory(){
     this.graph_flag = false;
     this.category_flag = true;
-  }
-
-  onShowCategory(){
-    this.change = true;
-  }
-
-  onShowNomalgraph(){
-    this.change = true;
-    this.showGraphService.getWorkTimes(1).subscribe((response) => {
-      this.work_time = response;
-      console.log(this.work_time)
-    })
-  }
-
-  onChangedate(){
-    this.change = true;
+    this.type_flag = true;
   }
 
   onChangeMonth($event){
@@ -76,6 +73,7 @@ export class SelectShowTypeComponent implements OnInit {
     }
     this.month = $event.target.value;
   }
+
 
   onChangeday($event){
     this.change = false;

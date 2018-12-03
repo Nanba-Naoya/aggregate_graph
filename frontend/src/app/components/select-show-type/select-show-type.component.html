@@ -25,12 +25,13 @@
   <div class="select-date" *ngIf="change">
     <app-show-graph
     [month]="month"
-    [day]="day">
+    [day]="day"
+    [type_flag]="type_flag">
   </app-show-graph>
   </div>
 </div>
 
-  <div class="select-type" *ngIf="category_flag">
+<div class="select-type" *ngIf="category_flag">
     カテゴリで集計
     <form class="form" [formGroup]="form">
       <div>
@@ -38,7 +39,7 @@
           <option class="category-select" [value]="null">
             カテゴリを選択
           </option>
-          <option class="category-list" *ngFor="let category of categories" [value]="category.title">
+          <option class="category-list" *ngFor="let category of categories" [value]="category.id">
             {{ category.title }}
           </option>
         </select>
@@ -60,11 +61,14 @@
         </select>
       </div>
     </form>
-    <button type="button" (click)=onChangedate()>表示</button>
+    <button type="button" (click)=onShowCategorygraph()>表示</button>
     <div class="select-date" *ngIf="change">
       <app-show-graph
         [month]="month"
-        [day]="day">
+        [day]="day"
+        [category_id]="category_id"
+        [type_flag]="type_flag">
       </app-show-graph>
     </div>
-  </div>
+</div><br>
+<button type="button" routerLink="/input-date">戻る</button>

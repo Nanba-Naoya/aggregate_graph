@@ -20,10 +20,9 @@ export class ShowGraphService {
     return this.http.get<Category>(url);
   }
 
-  getWorkTimes(id): Observable<WorkTime> {
-    const url = `${this.apiEndpoint}/show_graph/${id}`;
-    return this.http.get<WorkTime>(url);
+  getWorkTimes(params: {}): Observable<WorkTime> {
+    const url = `${this.apiEndpoint}/show_graph`;
+    return this.http.get<WorkTime>(url, {params: params});
   }
-
 
 }

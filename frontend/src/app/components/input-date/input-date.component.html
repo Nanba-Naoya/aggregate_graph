@@ -1,12 +1,11 @@
 <div class="parent">入力
   <form class="form" [formGroup]="form">
     <div>
-      <!--<input formControlName="name" type="text" class="form-control" placeholder="カテゴリを入力"><br>-->
       <select formControlName="work_time" class="work_time" (change)="onChangeCategory($event)">
         <option class="category-select" [value]="null">
           カテゴリを選択
         </option>
-        <option class="category-list" *ngFor="let category of categories" [value]="category.category_id">
+        <option class="category-list" *ngFor="let category of categories" [value]="category.id">
           {{ category.title }}
         </option>
       </select>
