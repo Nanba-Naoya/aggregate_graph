@@ -3,7 +3,6 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { ShowGraphService } from '../services/show-graph.service';
 
 import { Category } from '../category';
-import { WorkTime } from '../work_time';
 
 @Component({
   selector: 'app-select-show-type',
@@ -15,7 +14,7 @@ export class SelectShowTypeComponent implements OnInit {
   categories: Category;
   form: FormGroup;
   all_month = [1,2,3,4,5,6,7,8,9,10,11,12]
-  yaer = new Date().getFullYear()
+  year = new Date().getFullYear()
   max_day;
   all_day = [];
   month;
@@ -26,6 +25,11 @@ export class SelectShowTypeComponent implements OnInit {
   change = false;
   work_time;
   type_flag = false;
+  unselectCategory = true;
+  unselectMonth = true;
+  isErrorMonth = false;
+  isErrorCategory = false;
+  isdateError = false;
 
   constructor(private showGraphService: ShowGraphService) { 
     this.form = new FormGroup({
@@ -42,21 +46,32 @@ export class SelectShowTypeComponent implements OnInit {
   }
 
   onShowNomalgraph(){
-    this.change = true;
+    if(this.isUnSelectNomal()){
+      this.isErrorMonth = true;
+      this.isdateError = true;
+    } else {
+      this.change = true;
+    }
   }
 
   onShowCategorygraph(){
-    this.change = true;
+    if(this.isUnSelectNomal()){
+      this.isErrorCategory = true;
+      this.isdateError = true;
+    } else {
+      this.change = true;
+    }
   }
 
   onSelectCategory($event){
+    this.unselectCategory = ($event.target.value === 'null') ? true : false;
     this.category_id = $event.target.value
   }
 
   onChangegraph(){
     this.category_flag = false;
-    this.graph_flag = true;
     this.type_flag = false;
+    this.graph_flag = true;
   }
 
   onChangecategory(){
@@ -66,8 +81,9 @@ export class SelectShowTypeComponent implements OnInit {
   }
 
   onChangeMonth($event){
+    this.unselectMonth = ($event.target.value === 'null') ? true : false;
     this.change = false;
-    this.max_day = new Date(this.yaer, $event.target.value, 0).getDate()
+    this.max_day = new Date(this.year, $event.target.value, 0).getDate()
     for (var i = 0; i < this.max_day; i++){
       this.all_day[i] = i + 1;
     }
@@ -78,6 +94,17 @@ export class SelectShowTypeComponent implements OnInit {
   onChangeday($event){
     this.change = false;
     this.day = $event.target.value;
+  }
+
+  isUnSelectNomal(){
+    if (this.unselectMonth){
+      return true
+    }
+  }
+  isUnSelectCategory(){
+    if (this.unselectCategory || this.unselectMonth){
+      return true
+    }
   }
 
 }

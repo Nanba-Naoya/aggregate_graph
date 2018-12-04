@@ -1,5 +1,5 @@
-<button type="button" class="graph-button" (click)=onChangegraph()>グラフを表示する</button>
-<button type="button" class="category-button" (click)=onChangecategory()>カテゴリごとに表示する</button>
+<button class="button-show-graph" type="button" class="graph-button" (click)=onChangegraph()>グラフを表示する</button>
+<button class="category-button" type="button" (click)=onChangecategory()>カテゴリごとに表示する</button>
 <div class="select-type" *ngIf="graph_flag">
   <form class="form" [formGroup]="form">
     <div>
@@ -19,6 +19,9 @@
           {{ day }}日
         </option>
       </select><br>
+      <div class="error-month" *ngIf="isErrorMonth">
+        月を選択してください。
+      </div>
       <button type="button" (click)=onShowNomalgraph()>表示</button>
     </div>
   </form>
@@ -58,10 +61,13 @@
           <option class="day-list" *ngFor="let day of all_day" [value]="day">
             {{ day }}日
           </option>
-        </select>
+        </select><br>
+        <div class="error-month" *ngIf="isErrorCategory">
+          カテゴリと月を選択してください。
+        </div>
+        <button type="button" (click)=onShowCategorygraph()>表示</button>
       </div>
     </form>
-    <button type="button" (click)=onShowCategorygraph()>表示</button>
     <div class="select-date" *ngIf="change">
       <app-show-graph
         [month]="month"

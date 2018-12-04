@@ -8,6 +8,14 @@
    display: block;
  }
 
- .button{
-  font-size: 1.2rem;
+ .button {
+  margin-top: 5px;
+ }
+
+ .add-category {
+   margin-top: 5px;
+ }
+
+ .button-show-graph {
+   margin-top: 5px;
  }

@@ -6,6 +6,7 @@ module Api::V1
       if (work_times.empty?)
         work_times['error'] = true;
       end
+      
       render json: work_times
     end
 
@@ -21,8 +22,7 @@ module Api::V1
     def calctime(user_id)
       category_id = []
       work_times = {}
-
-      params[:day].present? ? work_dates = WorkTime.where("user_id = #{user_id} and created_at like '2018-#{change_time_notation(params[:month])}-#{change_time_notation(params[:day])}%'") : work_dates = WorkTime.where("user_id = #{user_id} and created_at like '2018-#{change_time_notation(params[:month])}%'")
+      params[:day] == 'null' ? work_dates = WorkTime.where("user_id = #{user_id} and created_at like '2018-#{change_time_notation(params[:month])}%'") : work_dates = WorkTime.where("user_id = #{user_id} and created_at like '2018-#{change_time_notation(params[:month])}-#{change_time_notation(params[:day])}%'")
 
       work_dates.each do |work_date|
         category_id.include?(work_date['category_id']) ?  category_id << work_date['category_id'] : category_id << work_date['category_id']
@@ -35,7 +35,7 @@ module Api::V1
     def calctime_category(user_id)
       work_times = {}
 
-      params[:day].present? ? work_dates = WorkTime.where("user_id = #{user_id} and category_id = #{params[:category_id]} and created_at like '2018-#{change_time_notation(params[:month])}-#{change_time_notation(params[:day])}%'") : work_dates = WorkTime.where("user_id = #{user_id} and category_id = #{params[:category_id]} and created_at like '2018-#{change_time_notation(params[:month])}%'")
+      params[:day] == 'null' ? work_dates = WorkTime.where("user_id = #{user_id} and category_id = #{params[:category_id]} and created_at like '2018-#{change_time_notation(params[:month])}%'") : work_dates = WorkTime.where("user_id = #{user_id} and category_id = #{params[:category_id]} and created_at like '2018-#{change_time_notation(params[:month])}-#{change_time_notation(params[:day])}%'")
       
       work_dates.each do |work_date|
         category_name = Category.find("#{work_date['category_id']}")

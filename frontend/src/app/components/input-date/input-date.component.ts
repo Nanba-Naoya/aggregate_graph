@@ -20,12 +20,27 @@ export class InputDateComponent implements OnInit {
   work_times_hour: WorkTimesHour;
   work_times_minute: WorkTimesMinute;
   form: FormGroup;
+  change = false;
+  all_month = [1,2,3,4,5,6,7,8,9,10,11,12]
+  max_day;
+  year = new Date().getFullYear()
+  all_day = [];
+  month;
+  day;
+  unselectCategory = true;
+  unselectMonth = true;
+  unselectDay = true;
+  unselectHour = true;
+  unselectMinute = true;
+  isError = false;
 
   constructor(private inputdateService: InputDateService) {
     this.form = new FormGroup({
       work_time: new FormControl(),
       hour: new FormControl(),
-      minute: new FormControl()
+      minute: new FormControl(),
+      month: new FormControl(),
+      day: new FormControl(),
     });
   }
 
@@ -42,22 +57,55 @@ export class InputDateComponent implements OnInit {
   }
 
   onCreate() {
-    this.inputdateService.createWorkTimes(this.form.value).subscribe(response => {
-      response = response;
-    });
+    if (this.isUnSelect()){
+      this.isError = true;
+    } else {
+      this.isError = false;
+      this.inputdateService.createWorkTimes(this.form.value).subscribe(response => {
+        response = response;
+      });
+    }
+
+  }
+
+  onChangeMonth($event){
+    this.unselectMonth = ($event.target.value === 'null') ? true : false;
+    this.change = false;
+    this.max_day = new Date(this.year, $event.target.value, 0).getDate()
+    for (var i = 0; i < this.max_day; i++){
+      this.all_day[i] = i + 1;
+    }
+    this.month = $event.target.value;
+  }
+
+  onChangeday($event){
+    this.unselectDay = ($event.target.value === 'null') ? true : false;
+    this.change = false;
+    this.day = $event.target.value;
   }
 
   onChangeCategory($event){
+    this.unselectCategory = ($event.target.value === 'null') ? true : false;
     $event.target.value;
   }
 
   onChangeHour($event) {
+    this.unselectHour = ($event.target.value === 'null') ? true : false;
     $event.target.value;
     
   }
 
   onChangeMinute($event){
+    this.unselectMinute = ($event.target.value === 'null') ? true : false;
     $event.target.value;
+  }
+
+  isUnSelect(){
+    if(this.unselectMinute || this.unselectHour || this.unselectDay || this.unselectMonth || this.unselectCategory) {
+      return true
+    } else {
+      return false
+    }
   }
 
 }

@@ -2,8 +2,11 @@
 <div class="parent">カテゴリ入力
     <form class="form" [formGroup]="form">
       <div>
-        <input formControlName="title" type="text" class="form-control" placeholder="カテゴリを入力">
-        <button type="button" (click)=onCreate()>追加</button>
+        <input formControlName="title" type="text" class="form-control" placeholder="カテゴリを入力" required>
+        <button class="button" type="button" (click)=onSubmit()>追加</button>
+      </div>
+      <div class="error-popup" *ngIf="formErrors['title']">
+        カテゴリを入力してください。
       </div>
     </form>
     <button type="button" routerLink="/input-date">戻る</button>
