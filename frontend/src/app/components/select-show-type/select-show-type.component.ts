@@ -55,7 +55,7 @@ export class SelectShowTypeComponent implements OnInit {
   }
 
   onShowCategorygraph(){
-    if(this.isUnSelectNomal()){
+    if(this.isUnSelectCategory()){
       this.isErrorCategory = true;
       this.isdateError = true;
     } else {
@@ -76,8 +76,8 @@ export class SelectShowTypeComponent implements OnInit {
 
   onChangecategory(){
     this.graph_flag = false;
-    this.category_flag = true;
     this.type_flag = true;
+    this.category_flag = true;
   }
 
   onChangeMonth($event){
