@@ -13,8 +13,10 @@ import { environment } from '../../../environments/environment';
 })
 export class InputDateService {
   apiEndpoint = environment.apiEndpoint;
+  googleUrl = environment.googleUrl;
   work_times_hour: WorkTimesHour;
   work_times_minute: WorkTimesMinute;
+  data: string;
 
   constructor(private http: HttpClient) { }
 
@@ -36,6 +38,11 @@ export class InputDateService {
   getWorkTimesMinute(): Observable<WorkTimesMinute> {
     const url = `${this.apiEndpoint}/work_times_minutes`;
     return this.http.get<WorkTimesMinute>(url);
+  }
+
+  getGoogleCalendar(data): Observable<string>{
+    const url = `${this.apiEndpoint}/get_google_calendars`;
+    return this.http.get(url, {data: data});
   }
 
 }

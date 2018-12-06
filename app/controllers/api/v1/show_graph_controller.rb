@@ -6,7 +6,6 @@ module Api::V1
       if work_times.empty?
         work_times['error'] = true;
       end
-      
       render json: work_times
     end
 
@@ -23,7 +22,7 @@ module Api::V1
       category_ids = []
       work_times = {}
 
-      params[:day].nil? ? work_dates = WorkTime.of_work_time(user_id, change_time_notation(params[:month])) : work_dates = WorkTime.of_work_time(user_id, "#{change_time_notation(params[:month])}-#{change_time_notation(params[:day])}")
+      params[:day].nil? ? work_dates = WorkTime.of_work_time(user_id, change_time(params[:month])) : work_dates = WorkTime.of_work_time(user_id, "#{change_time(params[:month])}-#{change_time(params[:day])}")
 
       work_dates.each do |work_date|
         category_ids.include?(work_date['category_id']) ?  category_ids << work_date['category_id'] : category_ids << work_date['category_id']
@@ -36,7 +35,7 @@ module Api::V1
     def calctime_category(user_id)
       work_times = {}
 
-      params[:day].nil? ? work_dates = WorkTime.of_category_time(user_id, params[:category_id], change_time_notation(params[:month])) : work_dates = WorkTime.of_category_time(user_id, params[:category_id], "#{change_time_notation(params[:month])}-#{change_time_notation(params[:day])}")
+      params[:day].nil? ? work_dates = WorkTime.of_category_time(user_id, params[:category_id], change_time(params[:month])) : work_dates = WorkTime.of_category_time(user_id, params[:category_id], "#{change_time(params[:month])}-#{change_time(params[:day])}")
       
       work_dates.each do |work_date|
         category_name = Category.find(work_date['category_id'])
@@ -45,7 +44,7 @@ module Api::V1
       work_times
     end
 
-    def change_time_notation(times)
+    def change_time(times)
       times = "0#{times}" if times.to_i <= 9
       times
     end

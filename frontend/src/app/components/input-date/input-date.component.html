@@ -51,4 +51,7 @@
   </form>
   <button class="add-category" routerLink="/create-category">カテゴリを追加する</button>
   </div>
-  <button class="button-show-graph" type="button" routerLink="/select-show-type">グラフを表示する</button>
+  <a href="{{googleUrl}}">googleカレンダーと連携する</a>
+  <button class="button-show-graph" type="button" routerLink="/show-normal-graph">グラフを表示する</button>
+  <button class="category-button" type="button" routerLink="/show-category-graph">カテゴリごとに表示する</button>
+  <button class="google" type="button" (click)=google_calendar()>google</button>

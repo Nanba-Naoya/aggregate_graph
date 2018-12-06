@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 
 import { InputDateService } from '../services/input-date.service';
 import { Category } from '../category';
 import { WorkTime } from '../work_time';
 import { WorkTimesHour } from '../../shared/components/work_times_hour';
 import { WorkTimesMinute } from '../../shared/components/work_times_minute';
-;
+import { environment } from '../../../environments/environment'
+
 @Component({
   selector: 'app-input-date',
   templateUrl: './input-date.component.html',
@@ -15,6 +17,7 @@ import { WorkTimesMinute } from '../../shared/components/work_times_minute';
 })
 
 export class InputDateComponent implements OnInit {
+  googleUrl = environment.googleUrl;
   categories: Category;
   work_times: WorkTime;
   work_times_hour: WorkTimesHour;
@@ -33,8 +36,10 @@ export class InputDateComponent implements OnInit {
   unselectHour = true;
   unselectMinute = true;
   isError = false;
+  google_data;
 
-  constructor(private inputdateService: InputDateService) {
+  constructor(private inputdateService: InputDateService,
+              private route: ActivatedRoute) {
     this.form = new FormGroup({
       work_time: new FormControl(),
       hour: new FormControl(),
@@ -53,6 +58,14 @@ export class InputDateComponent implements OnInit {
     })
     this.inputdateService.getWorkTimesMinute().subscribe((response) => {
       this.work_times_minute = response;
+    })
+    console.log(this.route.snapshot.queryParams['code'])
+    this.google_data = this.route.snapshot.queryParams['code'];
+  }
+
+  google_calendar(){
+    this.inputdateService.getGoogleCalendar(this.google_data).subscribe((response) => {
+      response = response;
     })
   }
 

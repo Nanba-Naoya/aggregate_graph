@@ -29,7 +29,7 @@ time_min = Time.utc(year, month, 1, 00, 00, 00).iso8601
 time_max = Time.utc(year, month, 31, 23, 59, 59).iso8601
 
 # get the event
-params = { 'calendarId' => 'primary',
+params = { 'calendarId' => 'naoyamessi10@gmail.com',
            'orderBy' => 'startTime',
            'timeMax' => time_max,
            'timeMin' => time_min,
@@ -43,15 +43,15 @@ events = result.data.items
 # puts
 events.each do |event|
   puts event.summary
-  puts event.description
-  puts event.location
+  #puts event.description
+  #puts event.location
   #puts event.htmlLink
   #puts event.etag
   #puts (event.end.dateTime - event.start.dateTime)/60/60
-  puts '*****：' + event.creator['email']
-  event.attendees.each do |aaa|
-    unless aaa['email'] == event.creator['email'] || aaa['responseStatus'] == 'declined'
-    puts aaa['email']
-    end
-  end
+  #puts '*****：' + event.creator['email']
+  #event.attendees.each do |aaa|
+  #  unless aaa['email'] == event.creator['email'] || aaa['responseStatus'] == 'declined'
+  #  puts aaa['email']
+  #  end
+  #end
 end
