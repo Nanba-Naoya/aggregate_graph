@@ -40,9 +40,9 @@ export class InputDateService {
     return this.http.get<WorkTimesMinute>(url);
   }
 
-  getGoogleCalendar(data): Observable<string>{
+  getGoogleCalendar(queryParams: string): Observable<string>{
     const url = `${this.apiEndpoint}/get_google_calendars`;
-    return this.http.get(url, {data: data});
+    return this.http.get<string>(url, {params: {query: queryParams}});
   }
 
 }

@@ -13,6 +13,7 @@ import { WorkTime } from '../work_time';
 export class ShowGraphComponent {
   @Input() data = [];
   work_time: WorkTime;
+  color_array = ['#696969', '#808080', '#a9a9a9', '#c0c0c0', '#d3d3d3', '#ffe4e1', '#fffff0', '#f0f8ff', '#4169e1', '#add8e6']
 
   @ViewChild('myChart') ref: ElementRef;
 
@@ -44,7 +45,7 @@ export class ShowGraphComponent {
         datasets: [{
           label: 'カテゴリ',
           data: work_time[1],
-          /*backgroundColor:*/
+          backgroundColor: this.color_array.slice(0,work_time[1].length)
         }]
       }
     });
