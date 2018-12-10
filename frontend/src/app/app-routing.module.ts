@@ -17,9 +17,9 @@ NgModule({
 const routes: Routes = [
   { path: '', component: InputDateComponent },
   { path: 'show', component: ShowGraphComponent },
-  { path: 'show-category-graph', component:ShowCategoryGraphComponent },
-  { path: 'create-category', component: CreateCategoryComponent },
-  { path: 'show-normal-graph', component: ShowNormalGraphComponent }
+  { path: 'category-graph', component:ShowCategoryGraphComponent },
+  { path: 'create', component: CreateCategoryComponent },
+  { path: 'normal-graph', component: ShowNormalGraphComponent }
 ]
 
 @NgModule({
