@@ -21,7 +21,7 @@ module Api::V1
     end
 
     def calctime_category(user_id)
-      work_times = params[:day].nil? ? WorkTime.aggregate_category(user_id, params[:category_id], change_time(params[:month])) : WorkTime.calc_category(user_id, params[:category_id], "#{change_time(params[:month])}-#{change_time(params[:day])}")
+      work_times = params[:day].nil? ? WorkTime.aggregate_category(user_id, params[:category_id], change_time(params[:month])) : WorkTime.aggregate_category(user_id, params[:category_id], "#{change_time(params[:month])}-#{change_time(params[:day])}")
     end
 
     def change_time(times)
