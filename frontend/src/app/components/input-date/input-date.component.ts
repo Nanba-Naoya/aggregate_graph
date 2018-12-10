@@ -59,7 +59,6 @@ export class InputDateComponent implements OnInit {
     this.inputdateService.getWorkTimesMinute().subscribe((response) => {
       this.work_times_minute = response;
     })
-    console.log(this.route.snapshot.queryParams['code'])
     this.google_data = this.route.snapshot.queryParams['code'];
   }
 
