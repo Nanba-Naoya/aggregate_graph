@@ -69,7 +69,8 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 # ridgepole
 gem 'ridgepole'
 
-gem 'google-api-client', '0.8.2'
 gem 'googleauth'
 gem 'dotenv-rails', require: 'dotenv/rails-now'
 gem 'pry-byebug'
+gem 'google-api-client'
+gem 'activerecord-import'
