@@ -12,13 +12,13 @@ module Api::V1
     end
 
     def create
-      work_times = WorkTime.new(work_time_params)
-      work_times.time = calctime()
-      work_times.category_id = params[:work_time][:work_time]
-      work_times.created_at = created_at()
-      work_times.updated_at = Time.current
-      work_times.user_id = 1111
-      work_times.save!
+      work_time = WorkTime.new(work_time_params)
+      work_time.time = calctime()
+      work_time.category_id = params[:work_time][:work_time]
+      work_time.created_at = created_at
+      work_time.updated_at = Time.current
+      work_time.user_id = 1111
+      work_time.save!
     end
 
     private
@@ -37,7 +37,6 @@ module Api::V1
     def created_at
       d = Date.today
       created_at = "#{d.year}-#{params[:work_time][:month]}-#{params[:work_time][:day]}"
-      created_at
     end
 
   end

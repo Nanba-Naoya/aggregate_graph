@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  apiEndpoint: 'http://localhost:3000/api/v1'
+  apiEndpoint: 'http://localhost:3000/api/v1',
+  googleUrl: 'https://accounts.google.com/o/oauth2/auth?client_id=1062349073075-3l06qo9t1huckd0d58mr1g6n3h9tpgbm.apps.googleusercontent.com&redirect_uri=http://localhost:4200&scope=https://www.googleapis.com/auth/calendar&response_type=code&approval_prompt=force&access_type=offline'
 };
 
 /*

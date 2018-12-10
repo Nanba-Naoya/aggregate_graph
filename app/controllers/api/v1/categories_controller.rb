@@ -12,11 +12,11 @@ module Api::V1
     end
 
     def create
-      categories = Category.new(category_params)
-      categories.created_at = Time.current
-      categories.updated_at = Time.current
-      categories.user_id = 1111
-      categories.save!
+      category = Category.new(category_params)
+      category.created_at = Time.current
+      category.updated_at = Time.current
+      category.user_id = 1111
+      category.save!
     end
 
     private
