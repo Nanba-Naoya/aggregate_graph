@@ -17,24 +17,11 @@ module Api::V1
     end
 
     def calctime(user_id)
-      category_names = []
-      work_times = {}
-
-      work_datas = params[:day].nil? ? WorkTime.of_calc(user_id, change_time(params[:month])) : WorkTime.of_calc(user_id, "#{change_time(params[:month])}-#{change_time(params[:day])}")
-      category_names = Category.of_name(work_datas.keys)
-      #hashに変換
-      work_times = [category_names, work_datas.values].transpose
-      work_times = Hash[*work_times.flatten]
-      work_times
+      work_times = params[:day].nil? ? WorkTime.of_aggregate(user_id, change_time(params[:month])) : WorkTime.of_aggregate(user_id, "#{change_time(params[:month])}-#{change_time(params[:day])}")
     end
 
     def calctime_category(user_id)
-      work_times = {}
-
-      work_datas = params[:day].nil? ? WorkTime.calc_category(user_id, params[:category_id], change_time(params[:month])) : WorkTime.calc_category(user_id, params[:category_id], "#{change_time(params[:month])}-#{change_time(params[:day])}")
-      category_name = Category.find(params[:category_id])
-      work_times["#{category_name['title']}"] = work_datas
-      work_times
+      work_times = params[:day].nil? ? WorkTime.aggregate_category(user_id, params[:category_id], change_time(params[:month])) : WorkTime.calc_category(user_id, params[:category_id], "#{change_time(params[:month])}-#{change_time(params[:day])}")
     end
 
     def change_time(times)

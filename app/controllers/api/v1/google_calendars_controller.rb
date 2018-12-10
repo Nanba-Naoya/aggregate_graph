@@ -1,6 +1,7 @@
 module Api::V1
   class GoogleCalendarsController < ApplicationController
 
+
     def index
       work_times = []
       calendar_datas = google_calendar_api(oauth(params))
@@ -30,12 +31,10 @@ module Api::V1
         redirect_uri: 'http://localhost:4200', client_secret: ENV['CLIENT_SECRET'], client_id: ENV['CLIENT_ID']}
       oauth_request.body = oauth_request_params.to_json
       oauth_response = https.request(oauth_request)
-      oauth_response
     end
     
     def google_calendar_api(oauth_response)
       response = JSON.parse(oauth_response.body)
-      binding.pry
       client = Google::APIClient.new(application_name: '')
       client.authorization.client_id = ENV['CLIENT_ID']
       client.authorization.client_secret = ENV['CLIENT_SECRET']

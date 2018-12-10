@@ -2,7 +2,16 @@ class WorkTime < ApplicationRecord
   belongs_to :category, optional: true
   validates :time, presence: true
 
-  scope :calc_category, ->(user_id, category_id, date) { where("user_id = #{user_id} and category_id = #{category_id} and created_at LIKE ?", "2018-#{date}%").sum(:time)}
-  scope :of_calc, ->(user_id, date) { where("user_id = #{user_id} and created_at LIKE ?", "2018-#{date}%").group(:category_id).sum(:time)}
+  scope :of_search, ->(user_id, date) { joins(:category).where("work_times.user_id = #{user_id} and work_times.created_at LIKE ?", "2018-#{date}%")}
   
+  class << self
+    def of_aggregate(user_id, date)
+      of_search(user_id, date).group(:title).sum(:time)
+    end
+
+    def aggregate_category(user_id, category_id, date)
+      of_search(user_id, date).where(category_id: category_id).group(:title).sum(:time)
+    end
+  end
+
 end
