@@ -42,7 +42,7 @@ export class InputDateService {
 
   getGoogleCalendar(queryParams: string): Observable<string>{
     const url = `${this.apiEndpoint}/google_calendars`;
-    return this.http.get<string>(url, {params: {query: queryParams}});
+    return this.http.post<string>(url, {query: queryParams});
   }
 
 }

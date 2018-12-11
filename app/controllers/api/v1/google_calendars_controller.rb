@@ -1,8 +1,6 @@
 module Api::V1
   class GoogleCalendarsController < ApplicationController
-
-
-    def index
+    def create
       work_times = []
       calendar_datas = google_calendar_api(oauth(params))
 
