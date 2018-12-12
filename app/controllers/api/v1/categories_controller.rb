@@ -6,17 +6,13 @@ module Api::V1
       render json: @categories
     end
 
-    def show
-      @categories = Category.all
-      render json: @categories
-    end
-
     def create
       category = Category.new(category_params)
       category.created_at = Time.current
       category.updated_at = Time.current
       category.user_id = 1111
       category.save!
+      render json: {message: 'ok',status: 200}
     end
 
     private
