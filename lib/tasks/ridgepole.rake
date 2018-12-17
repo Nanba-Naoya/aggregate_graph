@@ -21,7 +21,8 @@ namespace :ridgepole do
   end
 
   def ridgepole(*options)
-    command = ['bundle exec ridgepole', "--config #{config_file}"]
+    ENV['RAILS_ENV'] ||= 'development'
+    command = ['bundle exec ridgepole', "-E #{ENV['RAILS_ENV']}", "--config #{config_file}"]
     system [command + options].join(' ')
   end
 end
