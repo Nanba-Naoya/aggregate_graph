@@ -24,7 +24,7 @@ module Api::V1
     def import_work_times
       work_times = []
 
-      calendars_service = CalendarsService.new
+      calendars_service = Google::CalendarsService.new
       calendar_datas = calendars_service.google_calendar_api(params)
 
       if Rails.env == 'test'
