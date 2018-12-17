@@ -4,21 +4,21 @@ RSpec.describe WorkTime, type: :model do
 
   let!(:work_times) do 
     [
-      FactoryGirl.create(:work_time, time: '1.5', category_id: 1),
-      FactoryGirl.create(:work_time, time: '2.0', category_id: 1),
-      FactoryGirl.create(:work_time, time: '2.0', category_id: 1, created_at: '2018-12-13 12:00:00'),
-      FactoryGirl.create(:work_time, time: '3.0', category_id: 2),
-      FactoryGirl.create(:work_time, time: '1.0', category_id: 2),
-      FactoryGirl.create(:work_time, time: '1.0', category_id: 2, created_at: '2018-12-13 12:00:00'),
-      FactoryGirl.create(:work_time, time: '2.5', category_id: 3)
+      FactoryBot.create(:work_time, time: '1.5', category_id: 1),
+      FactoryBot.create(:work_time, time: '2.0', category_id: 1),
+      FactoryBot.create(:work_time, time: '2.0', category_id: 1, created_at: '2018-12-13 12:00:00'),
+      FactoryBot.create(:work_time, time: '3.0', category_id: 2),
+      FactoryBot.create(:work_time, time: '1.0', category_id: 2),
+      FactoryBot.create(:work_time, time: '1.0', category_id: 2, created_at: '2018-12-13 12:00:00'),
+      FactoryBot.create(:work_time, time: '2.5', category_id: 3)
     ]
   end
 
   let!(:categories) do
     [
-      FactoryGirl.create(:category, id: 1, title: '会議'),
-      FactoryGirl.create(:category, id: 2, title: '資料作成'),
-      FactoryGirl.create(:category, id: 3, title: '開発')
+      FactoryBot.create(:category, id: 1, title: '会議'),
+      FactoryBot.create(:category, id: 2, title: '資料作成'),
+      FactoryBot.create(:category, id: 3, title: '開発')
     ]
   end
 
