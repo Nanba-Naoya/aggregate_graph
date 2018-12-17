@@ -19,13 +19,25 @@ RSpec.describe Api::V1::CategoriesController, type: :controller do
   end
 
   describe "POST #create" do
-    before do
-      post :create, params: {category: {title: 'テスト'}}
+    context 'リクエストが正しい場合' do 
+      before do
+        post :create, params: {category: {title: 'テスト'}}
+      end
+      it 'responseが正しいか' do
+        expect(JSON.parse(response.body)['message']).to eq('ok')
+        expect(JSON.parse(response.body)['status']).to eq(200)
+        expect(Category.last.title).to eq 'テスト'
+      end
     end
-    it 'responseが正しいか' do
-      expect(JSON.parse(response.body)['message']).to eq('ok')
-      expect(JSON.parse(response.body)['status']).to eq(200)
-      expect(Category.last.title).to eq 'テスト'
+
+    context 'titleが空白の場合' do
+      before do 
+        post :create, params: {category: {title: ''}}
+      end
+      it 'エラーが返ってきている' do
+        expect(JSON.parse(response.body)['message']).to eq(["Title can't be blank"])
+        expect(JSON.parse(response.body)['status']).to eq(400)
+      end
     end
   end
 
