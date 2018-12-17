@@ -19,7 +19,7 @@ RSpec.describe Api::V1::CategoriesController, type: :controller do
   end
 
   describe "POST #create" do
-    context '保存できた場合' do 
+    context 'リクエストが正しい場合' do 
       before do
         post :create, params: {category: {title: 'テスト'}}
       end
@@ -30,13 +30,13 @@ RSpec.describe Api::V1::CategoriesController, type: :controller do
       end
     end
 
-    context '保存できなかった場合' do
+    context 'titleが空白の場合' do
       before do 
         post :create, params: {category: {title: ''}}
       end
       it 'エラーが返ってきている' do
-        expect(JSON.parse(response.body)['message']).to eq('バリデーションエラー')
-        expect(JSON.parse(response.body)['status']).to eq(500)
+        expect(JSON.parse(response.body)['message']['title']).to eq(["can't be blank"])
+        expect(JSON.parse(response.body)['status']).to eq(400)
       end
     end
   end

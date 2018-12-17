@@ -24,65 +24,81 @@ RSpec.describe Api::V1::WorkTimesController, type: :controller do
   end
 
   describe "GET #index" do
-    context '日別の集計' do
-      it 'responseが正しいか' do
-        get :index, params: {type_flag: 'false', month: 12, day: 12}
-        expect((JSON.parse(response.body))['会議']).to eq('3.5')
-        expect((JSON.parse(response.body))['資料作成']).to eq('4.0')
-        expect((JSON.parse(response.body))['開発']).to eq('2.5')
+    describe '日別の集計' do
+      context '集計できた場合' do
+        it 'responseが正しいか' do
+          get :index, params: {type_flag: 'false', month: 12, day: 12}
+          expect((JSON.parse(response.body))['会議']).to eq('3.5')
+          expect((JSON.parse(response.body))['資料作成']).to eq('4.0')
+          expect((JSON.parse(response.body))['開発']).to eq('2.5')
+        end
       end
 
-      it '集計した結果何もデータがない場合' do
-        get :index, params: {type_flag: 'false', month: 13, day: 32}
-        expect(JSON.parse(response.body)['message']).to eq('データが見つかりません')
-        expect(JSON.parse(response.body)['status']).to eq(500)
-      end
-    end
-
-    context '月別の集計' do
-      it 'responseが正しいか' do
-        get :index, params: {type_flag: 'false', month: 12}
-        expect((JSON.parse(response.body))['会議']).to eq('5.5')
-        expect((JSON.parse(response.body))['資料作成']).to eq('5.0')
-        expect((JSON.parse(response.body))['開発']).to eq('2.5')
-      end
-
-      it '集計した結果何もデータがない場合' do
-        get :index, params: {type_flag: 'false', month: 13}
-        expect(JSON.parse(response.body)['message']).to eq('データが見つかりません')
-        expect(JSON.parse(response.body)['status']).to eq(500)
+      context '集計した結果何もデータがない場合' do
+        it 'エラーが返ってくる' do
+          get :index, params: {type_flag: 'false', month: 13, day: 32}
+          expect(JSON.parse(response.body)['message']).to eq('データが見つかりません')
+          expect(JSON.parse(response.body)['status']).to eq(404)
+        end
       end
     end
 
-    context 'カテゴリごと日別の集計' do
-      it 'responseが正しいか' do
-        get :index, params: {type_flag: 'true', month: 12, day: 12, category_id: 1}
-        expect((JSON.parse(response.body))['会議']).to eq('3.5')
+    describe '月別の集計' do
+      context '集計できた場合' do
+        it 'responseが正しいか' do
+          get :index, params: {type_flag: 'false', month: 12}
+          expect((JSON.parse(response.body))['会議']).to eq('5.5')
+          expect((JSON.parse(response.body))['資料作成']).to eq('5.0')
+          expect((JSON.parse(response.body))['開発']).to eq('2.5')
+        end
       end
 
-      it '集計した結果何もデータがない場合' do
-        get :index, params: {type_flag: 'true', month: 13, day: 31}
-        expect(JSON.parse(response.body)['message']).to eq('データが見つかりません')
-        expect(JSON.parse(response.body)['status']).to eq(500)
+      context '集計した結果何もデータがない場合' do
+        it 'エラーが返ってくる' do
+          get :index, params: {type_flag: 'false', month: 13}
+          expect(JSON.parse(response.body)['message']).to eq('データが見つかりません')
+          expect(JSON.parse(response.body)['status']).to eq(404)
+        end
       end
     end
 
-    context 'カテゴリごと月別の集計' do
-      it 'responseが正しいか' do
-        get :index, params: {type_flag: 'true', month: 12, category_id: 2}
-        expect((JSON.parse(response.body))['資料作成']).to eq('5.0')
+    describe 'カテゴリごと日別の集計' do
+      context '集計できた場合' do
+        it 'responseが正しいか' do
+          get :index, params: {type_flag: 'true', month: 12, day: 12, category_id: 1}
+          expect((JSON.parse(response.body))['会議']).to eq('3.5')
+        end
       end
 
-      it '集計した結果何もデータがない場合' do
-        get :index, params: {type_flag: 'true', month: 13, day: 31}
-        expect(JSON.parse(response.body)['message']).to eq('データが見つかりません')
-        expect(JSON.parse(response.body)['status']).to eq(500)
+      context '集計した結果何もデータがない場合' do
+        it 'エラーが返ってくる' do
+          get :index, params: {type_flag: 'true', month: 13, day: 31}
+          expect(JSON.parse(response.body)['message']).to eq('データが見つかりません')
+          expect(JSON.parse(response.body)['status']).to eq(404)
+        end
+      end
+    end
+
+    describe 'カテゴリごと月別の集計' do
+      context '集計できた場合' do
+        it 'responseが正しいか' do
+          get :index, params: {type_flag: 'true', month: 12, category_id: 2}
+          expect((JSON.parse(response.body))['資料作成']).to eq('5.0')
+        end
+      end
+
+      context '集計した結果何もデータがない場合' do
+        it 'エラーが返ってくる' do
+          get :index, params: {type_flag: 'true', month: 13, day: 31}
+          expect(JSON.parse(response.body)['message']).to eq('データが見つかりません')
+          expect(JSON.parse(response.body)['status']).to eq(404)
+        end
       end
     end
   end
 
   describe "POST #create" do
-    context '保存できた場合' do
+    context 'リクエストが正しい場合' do
       before do
         post :create, params: {work_time: {hour: '10', minute: '40', work_time: '10'}}
       end
@@ -92,13 +108,13 @@ RSpec.describe Api::V1::WorkTimesController, type: :controller do
       end
     end
 
-    context '保存できなかった場合' do
+    context 'リクエストが正しくない場合' do
       before do 
         post :create, params: {work_time: {hour: 0, minute: 0, work_time: '11'}}
       end
       it 'エラーが返ってきている' do
-        expect(JSON.parse(response.body)['message']).to eq('バリデーションエラー')
-        expect(JSON.parse(response.body)['status']).to eq(500)
+        expect(JSON.parse(response.body)['message']['time']).to eq(["can't be blank"])
+        expect(JSON.parse(response.body)['status']).to eq(400)
       end
     end
   end

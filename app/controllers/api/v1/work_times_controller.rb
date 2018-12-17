@@ -5,7 +5,7 @@ module Api::V1
       user_id = 1111
       
       work_times = aggregate_time(user_id)
-      render json: work_times.blank? ? {message: 'データが見つかりません', status: 500} : work_times
+      render json: work_times.blank? ? { message: 'データが見つかりません', status: 404 } : work_times
     end
 
     def create
@@ -16,9 +16,9 @@ module Api::V1
       work_time.updated_at = Time.current
       work_time.user_id = 1111
       work_time.save!
-      render json: {message: 'ok',status: 200}
+      render json: { message: 'ok', status: 200 }
     rescue ActiveRecord::RecordInvalid => e
-      render json: {message: 'バリデーションエラー', status: 500}
+      render json: { message: e.record.errors, status: 400 }
     end
 
     def import_work_times
@@ -27,7 +27,7 @@ module Api::V1
       calendars_service = CalendarsService.new
       calendar_datas = calendars_service.google_calendar_api(params)
 
-      if Rails.env == 'development'
+      if Rails.env == 'development' || 'production'
         calendar_datas.each do |calendar_data|
           work_times << WorkTime.new(time: calc_work_time(calendar_data.start.dateTime, calendar_data.end.dateTime),
           category_id: 34, created_at: calendar_data.start.dateTime, updated_at: calendar_data.end.dateTime,
@@ -43,7 +43,7 @@ module Api::V1
         end
       end
       WorkTime.import work_times
-      render json: {message: 'ok',status: 200}
+      render json: { message: 'ok',status: 200 }
     end
 
     private

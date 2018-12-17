@@ -12,9 +12,9 @@ module Api::V1
       category.updated_at = Time.current
       category.user_id = 1111
       category.save!
-      render json: {message: 'ok', status: 200}
+      render json: { message: 'ok', status: 200 }
     rescue ActiveRecord::RecordInvalid => e
-      render json: {message: 'バリデーションエラー', status: 500}
+      render json: { message: e.record.errors, status: 400 }
     end
 
     private
