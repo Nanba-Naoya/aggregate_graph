@@ -65,7 +65,7 @@ jobs:
     - run: bundle exec rake ridgepole:apply
 
     - run: bundle exec rspec spec
-    - run: cd frontend && ng test --single-run
+    - run: cd frontend && ng test --watch=false
 
     - persist_to_workspace:
         root: ~/app
