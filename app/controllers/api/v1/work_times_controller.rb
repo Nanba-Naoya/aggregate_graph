@@ -33,8 +33,7 @@ module Api::V1
           category_id: 34, created_at: calendar_data[:start][:dateTime], updated_at: calendar_data[:end][:dateTime],
           user_id: 1111)
         end
-
-      else Rails.env == 'development' || 'production'
+      else
         calendar_datas.each do |calendar_data|
           work_times << WorkTime.new(time: calc_work_time(calendar_data.start.dateTime, calendar_data.end.dateTime),
           category_id: 34, created_at: calendar_data.start.dateTime, updated_at: calendar_data.end.dateTime,
