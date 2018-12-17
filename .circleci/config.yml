@@ -57,6 +57,10 @@ jobs:
     - run: cd frontend && sudo npm install -g yarn && sudo yarn global add @angular/cli@latest && sudo ng set --global packageManager=yarn && yarn
     - save_cache: *save_npm_packages_cache
 
+    - run:
+        name: Wait for db
+        command: dockerize -wait tcp://127.0.0.1:3306 -timeout 1m -wait-retry-interval 5s
+
     - run: bin/rails db:create && bin/rails ridgepole:apply
 
     - run: bundle exec rspec spec
