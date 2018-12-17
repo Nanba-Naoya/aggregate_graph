@@ -4,9 +4,9 @@ RSpec.describe Api::V1::WorkTimesMinutesController, type: :controller do
   
   let!(:work_times_minutes) do 
     [
-      FactoryGirl.create(:work_times_minute, minute: 1),
-      FactoryGirl.create(:work_times_minute, minute: 30),
-      FactoryGirl.create(:work_times_minute, minute: 55),   
+      FactoryBot.create(:work_times_minute, minute: 1),
+      FactoryBot.create(:work_times_minute, minute: 30),
+      FactoryBot.create(:work_times_minute, minute: 55),   
     ]
   end
 

@@ -4,8 +4,8 @@ RSpec.describe Api::V1::CategoriesController, type: :controller do
   
   let!(:categories) do 
     [
-      FactoryGirl.create(:category, title: '会議'),
-      FactoryGirl.create(:category, title: '資料作成')
+      FactoryBot.create(:category, title: '会議'),
+      FactoryBot.create(:category, title: '資料作成')
     ]
   end
 

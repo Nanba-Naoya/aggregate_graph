@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :work_time do
     time 1.1
     category_id 1
