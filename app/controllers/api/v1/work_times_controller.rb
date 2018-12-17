@@ -5,7 +5,7 @@ module Api::V1
       user_id = 1111
       
       work_times = aggregate_time(user_id)
-      render json: work_times
+      render json: work_times.blank? ? {message: 'データが見つかりません', status: 500} : work_times
     end
 
     def create
@@ -17,6 +17,8 @@ module Api::V1
       work_time.user_id = 1111
       work_time.save!
       render json: {message: 'ok',status: 200}
+    rescue ActiveRecord::RecordInvalid => e
+      render json: {message: 'バリデーションエラー', status: 500}
     end
 
     def import_work_times
@@ -25,10 +27,20 @@ module Api::V1
       calendars_service = CalendarsService.new
       calendar_datas = calendars_service.google_calendar_api(params)
 
-      calendar_datas.each do |calendar_data|
-        work_times << WorkTime.new(time: calc_work_time(calendar_data.start.dateTime, calendar_data.end.dateTime),
-        category_id: 34, created_at: calendar_data.start.dateTime, updated_at: calendar_data.end.dateTime,
-        user_id: 1111)
+      if Rails.env == 'development'
+        calendar_datas.each do |calendar_data|
+          work_times << WorkTime.new(time: calc_work_time(calendar_data.start.dateTime, calendar_data.end.dateTime),
+          category_id: 34, created_at: calendar_data.start.dateTime, updated_at: calendar_data.end.dateTime,
+          user_id: 1111)
+        end
+      end
+
+      if Rails.env == 'test'
+        calendar_datas.each do |calendar_data|
+          work_times << WorkTime.new(time: calc_work_time(calendar_data[:start][:dateTime], calendar_data[:end][:dateTime]),
+          category_id: 34, created_at: calendar_data[:start][:dateTime], updated_at: calendar_data[:end][:dateTime],
+          user_id: 1111)
+        end
       end
       WorkTime.import work_times
       render json: {message: 'ok',status: 200}
@@ -61,7 +73,7 @@ module Api::V1
     def hour_add_minute
       hour = params[:work_time][:hour].to_i
       minute = (params[:work_time][:minute].to_i / 60.to_f).round(1)
-      hour + minute
+      hour == 0 && minute == 0 ? '' : hour + minute
     end
 
     def created_at
@@ -71,7 +83,7 @@ module Api::V1
 
     #秒単位を時間単位に変換
     def calc_work_time(startTime, endTime)
-      (endTime - startTime)/60/60.round(1)
+      startTime == 0 || endTime == 0 ? '' : (endTime - startTime)/60/60.round(1)
     end
 
     def work_time_params
