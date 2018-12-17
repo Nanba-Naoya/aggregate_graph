@@ -19,13 +19,25 @@ RSpec.describe Api::V1::CategoriesController, type: :controller do
   end
 
   describe "POST #create" do
-    before do
-      post :create, params: {category: {title: 'テスト'}}
+    context '保存できた場合' do 
+      before do
+        post :create, params: {category: {title: 'テスト'}}
+      end
+      it 'responseが正しいか' do
+        expect(JSON.parse(response.body)['message']).to eq('ok')
+        expect(JSON.parse(response.body)['status']).to eq(200)
+        expect(Category.last.title).to eq 'テスト'
+      end
     end
-    it 'responseが正しいか' do
-      expect(JSON.parse(response.body)['message']).to eq('ok')
-      expect(JSON.parse(response.body)['status']).to eq(200)
-      expect(Category.last.title).to eq 'テスト'
+
+    context '保存できなかった場合' do
+      before do 
+        post :create, params: {category: {title: ''}}
+      end
+      it 'エラーが返ってきている' do
+        expect(JSON.parse(response.body)['message']).to eq('バリデーションエラー')
+        expect(JSON.parse(response.body)['status']).to eq(500)
+      end
     end
   end
 
