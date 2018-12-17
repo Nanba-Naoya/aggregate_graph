@@ -113,7 +113,8 @@ RSpec.describe Api::V1::WorkTimesController, type: :controller do
         post :create, params: {work_time: {hour: 0, minute: 0, work_time: '11'}}
       end
       it 'エラーが返ってきている' do
-        expect(JSON.parse(response.body)['message']['time']).to eq(["can't be blank"])
+        binding.pry
+        expect(JSON.parse(response.body)['message']).to eq(["Time can't be blank"])
         expect(JSON.parse(response.body)['status']).to eq(400)
       end
     end

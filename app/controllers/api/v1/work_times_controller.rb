@@ -18,7 +18,7 @@ module Api::V1
       work_time.save!
       render json: { message: 'ok', status: 200 }
     rescue ActiveRecord::RecordInvalid => e
-      render json: { message: e.record.errors, status: 400 }
+      render json: { message: e.record.errors.full_messages, status: 400 }
     end
 
     def import_work_times
@@ -27,18 +27,17 @@ module Api::V1
       calendars_service = CalendarsService.new
       calendar_datas = calendars_service.google_calendar_api(params)
 
-      if Rails.env == 'development' || 'production'
-        calendar_datas.each do |calendar_data|
-          work_times << WorkTime.new(time: calc_work_time(calendar_data.start.dateTime, calendar_data.end.dateTime),
-          category_id: 34, created_at: calendar_data.start.dateTime, updated_at: calendar_data.end.dateTime,
-          user_id: 1111)
-        end
-      end
-
       if Rails.env == 'test'
         calendar_datas.each do |calendar_data|
           work_times << WorkTime.new(time: calc_work_time(calendar_data[:start][:dateTime], calendar_data[:end][:dateTime]),
           category_id: 34, created_at: calendar_data[:start][:dateTime], updated_at: calendar_data[:end][:dateTime],
+          user_id: 1111)
+        end
+
+      else Rails.env == 'development' || 'production'
+        calendar_datas.each do |calendar_data|
+          work_times << WorkTime.new(time: calc_work_time(calendar_data.start.dateTime, calendar_data.end.dateTime),
+          category_id: 34, created_at: calendar_data.start.dateTime, updated_at: calendar_data.end.dateTime,
           user_id: 1111)
         end
       end

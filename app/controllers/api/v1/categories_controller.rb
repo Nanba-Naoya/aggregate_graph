@@ -14,7 +14,7 @@ module Api::V1
       category.save!
       render json: { message: 'ok', status: 200 }
     rescue ActiveRecord::RecordInvalid => e
-      render json: { message: e.record.errors, status: 400 }
+      render json: { message: e.record.errors.full_messages, status: 400 }
     end
 
     private

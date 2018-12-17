@@ -35,7 +35,7 @@ RSpec.describe Api::V1::CategoriesController, type: :controller do
         post :create, params: {category: {title: ''}}
       end
       it 'エラーが返ってきている' do
-        expect(JSON.parse(response.body)['message']['title']).to eq(["can't be blank"])
+        expect(JSON.parse(response.body)['message']).to eq(["Title can't be blank"])
         expect(JSON.parse(response.body)['status']).to eq(400)
       end
     end
