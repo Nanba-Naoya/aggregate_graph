@@ -2,8 +2,8 @@ import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 
 import { ShowGraphService } from '../../../components/services/show-graph.service';
-
 import { Category } from '../../../components/category';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-select-date',
@@ -24,7 +24,8 @@ export class SelectDateComponent implements OnInit {
   @Output() eventMonth = new EventEmitter<String>();
   @Output() eventDay = new EventEmitter<String>();
 
-  constructor(private showGraphService: ShowGraphService) { 
+  constructor(private showGraphService: ShowGraphService,
+              private cookieService: CookieService) { 
     this.form = new FormGroup({
       category: new FormControl(),
       month: new FormControl(),
@@ -34,7 +35,7 @@ export class SelectDateComponent implements OnInit {
 
   ngOnInit() {
     if (this.category_flag){
-      this.showGraphService.getCategories().subscribe((response) => {
+      this.showGraphService.getCategories(this.cookieService.get('user_id')).subscribe((response) => {
         this.categories = response;
       })
     }

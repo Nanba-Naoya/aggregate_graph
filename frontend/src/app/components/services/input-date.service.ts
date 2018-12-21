@@ -20,8 +20,8 @@ export class InputDateService {
 
   constructor(private http: HttpClient) { }
 
-  getCategories(): Observable<Category> {
-    const url = `${this.apiEndpoint}/categories`;
+  getCategories(user_id): Observable<Category> {
+    const url = `${this.apiEndpoint}/categories/${user_id}`;
     return this.http.get<Category>(url);
   }
 

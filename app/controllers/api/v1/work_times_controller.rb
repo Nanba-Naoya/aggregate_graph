@@ -1,10 +1,9 @@
 module Api::V1
   class WorkTimesController < ApplicationController
+    before_action :check_cookie, only: [:index, :create]
 
     def index
-      user_id = 1111
-      
-      work_times = aggregate_time(user_id)
+      work_times = aggregate_time(cookies[:user_id])
       render json: work_times.blank? ? { message: 'データが見つかりません', status: 404 } : work_times
     end
 
@@ -14,7 +13,7 @@ module Api::V1
       work_time.category_id = params[:work_time][:work_time]
       work_time.created_at = created_at
       work_time.updated_at = Time.current
-      work_time.user_id = 1111
+      work_time.user_id = cookies[:user_id]
       work_time.save!
       render json: { message: 'ok', status: 200 }
     rescue ActiveRecord::RecordInvalid => e
@@ -24,8 +23,15 @@ module Api::V1
     def import_work_times
       work_times = []
 
-      calendars_service = Google::CalendarsService.new
-      calendar_datas = calendars_service.google_calendar_api(params)
+      calendars_service = GoogleApi::CalendarsService.new
+      if cookies[:user_id].nil?
+        new_id = calendars_service.create_new_id(params)
+        calendar_datas = calendars_service.google_calendar_api(new_id)
+      else
+        access_token = calendars_service.refresh_token(cookies[:user_id])
+        calendar_datas = calendars_service.calendar_api_refresh_token(access_token)
+        new_id = cookies[:user_id]
+      end
 
       if Rails.env == 'test'
         calendar_datas.each do |calendar_data|
@@ -35,16 +41,28 @@ module Api::V1
         end
       else
         calendar_datas.each do |calendar_data|
+          next unless calendar_data.start.date.nil?
+          binding.pry
           work_times << WorkTime.new(time: calc_work_time(calendar_data.start.dateTime, calendar_data.end.dateTime),
           category_id: 34, created_at: calendar_data.start.dateTime, updated_at: calendar_data.end.dateTime,
-          user_id: 1111)
+          user_id: new_id)
         end
       end
       WorkTime.import work_times
-      render json: { message: 'ok',status: 200 }
+      render json: { message: 'ok', status: 200 , cookie: new_id}
+    rescue => e
+      render json: { message: e, status: 500}
     end
 
     private
+
+    #cookieをチェック
+    def check_cookie
+      if cookies[:user_id].nil?
+        render json: { message: 'クッキーが消去されました', status: 500 }
+        return
+      end
+    end
 
     #集計し、返す
     def aggregate_time(user_id)

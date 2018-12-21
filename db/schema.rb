@@ -16,7 +16,7 @@ ActiveRecord::Schema.define(version: 0) do
     t.string "title", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
+    t.string "user_id", null: false
   end
 
   create_table "work_times", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -24,7 +24,7 @@ ActiveRecord::Schema.define(version: 0) do
     t.bigint "category_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
+    t.string "user_id", null: false
   end
 
   create_table "work_times_hours", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

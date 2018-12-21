@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { CookieService } from 'ngx-cookie-service';
 
 import { ShowGraphService } from '../services/show-graph.service'
 import { Category } from '../category';
 import { FormGroup, FormControl } from '@angular/forms';
+import { environment } from '../../../environments/environment'
 
 @Component({
   selector: 'app-show-category-graph',
@@ -10,6 +12,7 @@ import { FormGroup, FormControl } from '@angular/forms';
   styleUrls: ['./show-category-graph.component.css']
 })
 export class ShowCategoryGraphComponent implements OnInit {
+  googleUrl = environment.googleUrl;
   form: FormGroup
   categories: Category;
   category_id
@@ -21,7 +24,8 @@ export class ShowCategoryGraphComponent implements OnInit {
   data;
   eventData;
 
-  constructor(private showGraphService: ShowGraphService) {
+  constructor(private showGraphService: ShowGraphService,
+              private cookieService: CookieService,) {
     this.form = new FormGroup({
       month: new FormControl(),
       day: new FormControl(),
@@ -30,6 +34,9 @@ export class ShowCategoryGraphComponent implements OnInit {
    }
 
   ngOnInit() {
+    if (this.cookieService.get('user_id') == ''){
+      window.location.href = this.googleUrl
+    }
   }
 
   onReceiveCategory_id(eventData) {
@@ -59,7 +66,7 @@ export class ShowCategoryGraphComponent implements OnInit {
     if (this.form['category_id'] !== undefined && this.form['month'] !== undefined){
       this.showGraphService.getWorkTimes(this.form).subscribe((response) => {
         this.data = response;
-        if (this.data['error']){
+        if (this.data['status'] == 404){
           alert('データが見つかりません。')
         } else {
           this.change = true

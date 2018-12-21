@@ -1,8 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { AppRoutingModule } from './app-routing.module'; 
+import { CookieService } from 'ngx-cookie-service';
+import { HttpsInterceptor } from './shared/services/http.interceptor';
 
 import { AppComponent } from './app.component';
 import { TopMenuComponent } from './components/top-menu.component';
@@ -38,7 +40,9 @@ import { SelectDateComponent } from './shared/components/select-date/select-date
   providers: [
     InputDateService,
     CreateCategoryService,
-    ShowGraphService
+    ShowGraphService,
+    CookieService,
+    { provide: HTTP_INTERCEPTORS, useClass: HttpsInterceptor, multi: true },
   ],
   bootstrap: [AppComponent]
 })

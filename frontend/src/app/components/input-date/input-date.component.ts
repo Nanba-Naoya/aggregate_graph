@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
 
 import { InputDateService } from '../services/input-date.service';
 import { Category } from '../category';
@@ -36,10 +37,12 @@ export class InputDateComponent implements OnInit {
   unselectHour = true;
   unselectMinute = true;
   isError = false;
+  access = false;
   google_data;
 
   constructor(private inputdateService: InputDateService,
-              private route: ActivatedRoute) {
+              private route: ActivatedRoute,
+              private cookieService: CookieService) {
     this.form = new FormGroup({
       work_time: new FormControl(),
       hour: new FormControl(),
@@ -50,21 +53,44 @@ export class InputDateComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.inputdateService.getCategories().subscribe((response) => {
-      this.categories = response;
-    })
-    this.inputdateService.getWorkTimesHour().subscribe((response) => {
-      this.work_times_hour = response;
-    })
-    this.inputdateService.getWorkTimesMinute().subscribe((response) => {
-      this.work_times_minute = response;
-    })
-    this.google_data = this.route.snapshot.queryParams['code'];
+    /*クエリが取れていたら*/
+    if (this.route.snapshot.queryParams['error'] !== 'access_denied'){
+      this.google_data = this.route.snapshot.queryParams['code'];
+      /*code以下を使ってgoogleカレンダー認証*/
+      if(this.google_data !== undefined && this.cookieService.get('user_id') == ''){
+        /*code以下がある、かつcookieがない場合のみとってくる*/
+        this.inputdateService.getGoogleCalendar(this.google_data).subscribe((response) => {
+          response = response;
+          if (this.cookieService.get('user_id') !== response['cookie']){
+            this.cookieService.set('user_id', response['cookie'])
+          }
+        })
+      } else {
+        if (this.cookieService.get('user_id') == ''){
+          window.location.href = this.googleUrl
+        }
+      }
+      this.inputdateService.getCategories(this.cookieService.get('user_id')).subscribe((response) => {
+        this.categories = response;
+      })
+      this.inputdateService.getWorkTimesHour().subscribe((response) => {
+        this.work_times_hour = response;
+      })
+      this.inputdateService.getWorkTimesMinute().subscribe((response) => {
+        this.work_times_minute = response;
+      })
+      this.access = true;
+    } else {
+      this.access = false;
+    }
   }
 
   google_calendar(){
     this.inputdateService.getGoogleCalendar(this.google_data).subscribe((response) => {
       response = response;
+      if (this.cookieService.get('user_id') !== response['cookie']){
+        this.cookieService.set('user_id', response['cookie'])
+      }
     })
   }
 
@@ -75,6 +101,9 @@ export class InputDateComponent implements OnInit {
       this.isError = false;
       this.inputdateService.createWorkTimes(this.form.value).subscribe(response => {
         response = response;
+        if(response['status'] == 500){
+          window.location.href = this.googleUrl
+        }
       });
     }
 

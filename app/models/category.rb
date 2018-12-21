@@ -3,5 +3,5 @@ class Category < ApplicationRecord
   validates :title, presence: true
   accepts_nested_attributes_for :work_time
 
-  scope :of_name, ->(id) { where(id: id).pluck(:title)}
+  scope :search_title, ->(title, user_id) { where(title: title, user_id: user_id)}
 end

@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
+import { CookieService } from 'ngx-cookie-service';
 
 import { CreateCategoryService } from  '../services/create-category.service';
-import { Category } from '../category';
 import { validateForm } from '../../shared/functions/validate-form';
+import { environment } from '../../../environments/environment'
 
 @Component({
   selector: 'app-create-category',
@@ -12,7 +13,7 @@ import { validateForm } from '../../shared/functions/validate-form';
   providers: [CreateCategoryService]
 })
 export class CreateCategoryComponent implements OnInit {
-  categories: Category;
+  googleUrl = environment.googleUrl;
   form: FormGroup;
   formErrors: {[key: string]: Array<string>}= {};
   validationMessages = {
@@ -21,13 +22,17 @@ export class CreateCategoryComponent implements OnInit {
     }
   };
 
-  constructor(private CreateCategoryService: CreateCategoryService) { 
+  constructor(private CreateCategoryService: CreateCategoryService,
+              private cookieService: CookieService) { 
     this.form = new FormGroup({
       title: new FormControl(),
     });
   }
 
   ngOnInit() {
+    if (this.cookieService.get('user_id') == ''){
+      window.location.href = this.googleUrl
+    }
   }
 
   onSubmit() {
@@ -35,6 +40,9 @@ export class CreateCategoryComponent implements OnInit {
       this.formErrors =  validateForm(this.form, true, this.validationMessages);
       this.CreateCategoryService.createCategories(this.form.value).subscribe(response => {
         response = response;
+        if(response['status'] == 500){
+          window.location.href = this.googleUrl
+        }
       })
     } else {
       this.formErrors =  validateForm(this.form, false, this.validationMessages);

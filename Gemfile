@@ -75,3 +75,4 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'ridgepole'
 gem 'google-api-client'
 gem 'activerecord-import'
+gem 'redis-namespace'

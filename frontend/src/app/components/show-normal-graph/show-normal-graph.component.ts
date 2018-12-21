@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { CookieService } from 'ngx-cookie-service';
 
 import { ShowGraphService } from '../services/show-graph.service'
 import { Category } from '../category';
 import { FormGroup, FormControl } from '@angular/forms';
+import { environment } from '../../../environments/environment'
 
 @Component({
   selector: 'app-show-normal-graph',
@@ -10,6 +12,7 @@ import { FormGroup, FormControl } from '@angular/forms';
   styleUrls: ['./show-normal-graph.component.css']
 })
 export class ShowNormalGraphComponent implements OnInit {
+  googleUrl = environment.googleUrl;
   form: FormGroup
   categories: Category;
   month;
@@ -20,7 +23,8 @@ export class ShowNormalGraphComponent implements OnInit {
   data;
   eventData;
 
-  constructor(private showGraphService: ShowGraphService) {
+  constructor(private showGraphService: ShowGraphService,
+              private cookieService: CookieService,) {
     this.form = new FormGroup({
       month: new FormControl(),
       day: new FormControl(),
@@ -29,6 +33,9 @@ export class ShowNormalGraphComponent implements OnInit {
    }
 
   ngOnInit() {
+    if (this.cookieService.get('user_id') == ''){
+      window.location.href = this.googleUrl
+    }
   }
 
   onReceiveMonth(eventData) {
@@ -50,8 +57,8 @@ export class ShowNormalGraphComponent implements OnInit {
     if (this.form['month'] !== undefined){
       this.showGraphService.getWorkTimes(this.form).subscribe((response) => {
         this.data = response;
-        if (this.data['error']){
-          alert('データが見つかりません。')
+        if (this.data['status'] == 404){
+          alert(this.data['message'])
         } else {
           this.change = true
         }
