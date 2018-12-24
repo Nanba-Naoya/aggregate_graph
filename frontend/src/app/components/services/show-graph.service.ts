@@ -25,4 +25,9 @@ export class ShowGraphService {
     return this.http.get<WorkTime>(url, {params: params});
   }
 
+  getUsrsLists(params: {}): Observable<Category> {
+    const url = `${this.apiEndpoint}/work_users_lists`;
+    return this.http.get<Category>(url, {params: params});
+  }
+
 }

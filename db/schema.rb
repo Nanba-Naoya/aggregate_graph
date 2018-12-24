@@ -35,4 +35,12 @@ ActiveRecord::Schema.define(version: 0) do
     t.string "minute", null: false
   end
 
+  create_table "work_users_lists", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "user_name", null: false
+    t.bigint "work_time_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "user_id", null: false
+  end
+
 end

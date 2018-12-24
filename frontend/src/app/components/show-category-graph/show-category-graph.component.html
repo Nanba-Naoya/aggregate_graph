@@ -11,5 +11,10 @@
       [data]="data">
     </app-show-graph>
   </div>
+  <div class="select-user" *ngIf="change">
+      <div class="hour-list" *ngFor="let category of names">
+          {{ category }}
+      </div>
+  </div>
   <button type="button" routerLink="">戻る</button>
 </div>

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { CookieService } from 'ngx-cookie-service';
+import { ToastrService } from 'ngx-toastr';    // add
+
 
 import { CreateCategoryService } from  '../services/create-category.service';
 import { validateForm } from '../../shared/functions/validate-form';
@@ -23,7 +25,8 @@ export class CreateCategoryComponent implements OnInit {
   };
 
   constructor(private CreateCategoryService: CreateCategoryService,
-              private cookieService: CookieService) { 
+              private cookieService: CookieService,
+              private toastr: ToastrService) { 
     this.form = new FormGroup({
       title: new FormControl(),
     });
@@ -44,6 +47,7 @@ export class CreateCategoryComponent implements OnInit {
           window.location.href = this.googleUrl
         }
       })
+      this.toastr.success('カテゴリを保存しました！');
     } else {
       this.formErrors =  validateForm(this.form, false, this.validationMessages);
     }

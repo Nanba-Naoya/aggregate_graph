@@ -26,7 +26,9 @@ module Api::V1
       calendars_service = GoogleApi::CalendarsService.new
       if cookies[:user_id].nil?
         new_id = calendars_service.create_new_id(params)
-        calendar_datas = calendars_service.google_calendar_api(new_id)
+        render json: { message: 'user_idを作成', status: 400, user_id: new_id}
+        return
+        #calendar_datas = calendars_service.google_calendar_api(new_id)
       else
         access_token = calendars_service.refresh_token(cookies[:user_id])
         calendar_datas = calendars_service.calendar_api_refresh_token(access_token)
@@ -42,7 +44,6 @@ module Api::V1
       else
         calendar_datas.each do |calendar_data|
           next unless calendar_data.start.date.nil?
-          binding.pry
           work_times << WorkTime.new(time: calc_work_time(calendar_data.start.dateTime, calendar_data.end.dateTime),
           category_id: 34, created_at: calendar_data.start.dateTime, updated_at: calendar_data.end.dateTime,
           user_id: new_id)

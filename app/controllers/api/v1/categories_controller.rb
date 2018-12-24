@@ -1,9 +1,10 @@
 module Api::V1
   class CategoriesController < ApplicationController
     before_action :check_cookie, only: :create
+    before_action :create_first_category, only: :show
     
     def show
-      @categories = Category.where(user_id: params[:id])
+      @categories = Category.search_category(cookies[:user_id])
       render json: @categories
     end
 
@@ -28,6 +29,14 @@ module Api::V1
       if cookies[:user_id].nil?
         render json: { message: 'クッキーが消去されました', status: 500 }
         return
+      end
+    end
+
+    def create_first_category
+      if Category.search_category(cookies[:user_id]).blank?
+        category = Category.new(title: '会議', created_at: Time.current, updated_at: Time.current, user_id: cookies[:user_id])
+        category.save!
+        @category_id = Category.where(title: '会議', user_id: cookies[:user_id]).pluck(:id)
       end
     end
 

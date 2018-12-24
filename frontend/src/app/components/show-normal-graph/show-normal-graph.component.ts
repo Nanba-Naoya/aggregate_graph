@@ -21,6 +21,9 @@ export class ShowNormalGraphComponent implements OnInit {
   change = false;
   type_flag = false;
   data;
+  users;
+  names;
+  lists;
   eventData;
 
   constructor(private showGraphService: ShowGraphService,
@@ -57,6 +60,16 @@ export class ShowNormalGraphComponent implements OnInit {
     if (this.form['month'] !== undefined){
       this.showGraphService.getWorkTimes(this.form).subscribe((response) => {
         this.data = response;
+        this.showGraphService.getUsrsLists(this.form).subscribe((response)=> {
+          this.users = response;
+          
+          var users_lists = [];
+          for (var item in this.users){
+            users_lists.push(item+ ' : '+ this.users[item])
+          }
+          this.names = users_lists
+
+        })
         if (this.data['status'] == 404){
           alert(this.data['message'])
         } else {

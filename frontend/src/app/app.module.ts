@@ -5,6 +5,8 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { AppRoutingModule } from './app-routing.module'; 
 import { CookieService } from 'ngx-cookie-service';
 import { HttpsInterceptor } from './shared/services/http.interceptor';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 
 import { AppComponent } from './app.component';
 import { TopMenuComponent } from './components/top-menu.component';
@@ -36,6 +38,12 @@ import { SelectDateComponent } from './shared/components/select-date/select-date
     FormsModule,
     ReactiveFormsModule,
     AppRoutingModule,
+    BrowserAnimationsModule,    // add
+    ToastrModule.forRoot({
+      timeOut: 1500,
+      positionClass: 'toast-top-center',
+      preventDuplicates: false
+    })
   ],
   providers: [
     InputDateService,

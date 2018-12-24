@@ -53,6 +53,22 @@ export class InputDateComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.getTemplate();
+  }
+
+  async getTemplate(){
+    await this.getNewid();
+    this.inputdateService.getCategories(this.cookieService.get('user_id')).subscribe((response) => {
+      this.categories = response;
+    })
+    this.inputdateService.getWorkTimesHour().subscribe((response) => {
+      this.work_times_hour = response;
+    })
+    this.inputdateService.getWorkTimesMinute().subscribe((response) => {
+      this.work_times_minute = response;
+    })
+  }
+  getNewid(){
     /*クエリが取れていたら*/
     if (this.route.snapshot.queryParams['error'] !== 'access_denied'){
       this.google_data = this.route.snapshot.queryParams['code'];
@@ -62,7 +78,10 @@ export class InputDateComponent implements OnInit {
         this.inputdateService.getGoogleCalendar(this.google_data).subscribe((response) => {
           response = response;
           if (this.cookieService.get('user_id') !== response['cookie']){
-            this.cookieService.set('user_id', response['cookie'])
+            this.cookieService.set('user_id', response['user_id'])
+            this.inputdateService.getCategories(this.cookieService.get('user_id')).subscribe((response) => {
+              this.categories = response;
+            })
           }
         })
       } else {
@@ -70,15 +89,6 @@ export class InputDateComponent implements OnInit {
           window.location.href = this.googleUrl
         }
       }
-      this.inputdateService.getCategories(this.cookieService.get('user_id')).subscribe((response) => {
-        this.categories = response;
-      })
-      this.inputdateService.getWorkTimesHour().subscribe((response) => {
-        this.work_times_hour = response;
-      })
-      this.inputdateService.getWorkTimesMinute().subscribe((response) => {
-        this.work_times_minute = response;
-      })
       this.access = true;
     } else {
       this.access = false;
