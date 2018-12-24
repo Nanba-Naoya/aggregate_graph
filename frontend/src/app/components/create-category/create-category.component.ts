@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { CookieService } from 'ngx-cookie-service';
-import { ToastrService } from 'ngx-toastr';    // add
+import { ToastrService } from 'ngx-toastr';
 
 
 import { CreateCategoryService } from  '../services/create-category.service';
@@ -33,7 +33,7 @@ export class CreateCategoryComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.cookieService.get('user_id') == ''){
+    if (this.cookieService.get('user_id') == '' || this.cookieService.get('user_id') == 'undefined'){
       window.location.href = this.googleUrl
     }
   }

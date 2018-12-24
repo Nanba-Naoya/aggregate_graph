@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
+import { ToastrService } from 'ngx-toastr';
 
 import { ShowGraphService } from '../services/show-graph.service'
 import { Category } from '../category';
@@ -27,7 +28,8 @@ export class ShowCategoryGraphComponent implements OnInit {
   eventData;
 
   constructor(private showGraphService: ShowGraphService,
-              private cookieService: CookieService,) {
+              private cookieService: CookieService,
+              private toastr: ToastrService) {
     this.form = new FormGroup({
       month: new FormControl(),
       day: new FormControl(),
@@ -79,7 +81,7 @@ export class ShowCategoryGraphComponent implements OnInit {
 
         })
         if (this.data['status'] == 404){
-          alert('データが見つかりません。')
+          this.toastr.error(this.data['message']);
         } else {
           this.change = true
         }

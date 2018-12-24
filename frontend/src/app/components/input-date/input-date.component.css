@@ -3,6 +3,10 @@
   display: block;
  }
 
+ .form{
+  margin-top: 10px;
+ }
+
  .list {
    text-align: center;
    display: block;
@@ -13,9 +17,18 @@
  }
 
  .add-category {
-   margin-top: 5px;
+   margin-top: 20px;
  }
 
  .button-show-graph {
-   margin-top: 5px;
+   margin-top: 20px;
+   margin-right: 10px;
+ }
+
+ .category-button {
+  margin-left: 10px;
+ }
+
+ .google {
+  margin-top: 25px;
  }

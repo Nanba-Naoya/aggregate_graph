@@ -28,11 +28,11 @@ module Api::V1
         new_id = calendars_service.create_new_id(params)
         render json: { message: 'user_idを作成', status: 400, user_id: new_id}
         return
-        #calendar_datas = calendars_service.google_calendar_api(new_id)
       else
         access_token = calendars_service.refresh_token(cookies[:user_id])
         calendar_datas = calendars_service.calendar_api_refresh_token(access_token)
         new_id = cookies[:user_id]
+        category_id = Category.search_title('会議',cookies[:user_id])[0][:id]
       end
 
       if Rails.env == 'test'
@@ -44,9 +44,24 @@ module Api::V1
       else
         calendar_datas.each do |calendar_data|
           next unless calendar_data.start.date.nil?
-          work_times << WorkTime.new(time: calc_work_time(calendar_data.start.dateTime, calendar_data.end.dateTime),
-          category_id: 34, created_at: calendar_data.start.dateTime, updated_at: calendar_data.end.dateTime,
-          user_id: new_id)
+          if calendar_data.summary.include?('個人作業') == false
+            work_times << WorkTime.new(time: calc_work_time(calendar_data.start.dateTime, calendar_data.end.dateTime),
+            category_id: category_id, created_at: calendar_data.start.dateTime, updated_at: calendar_data.end.dateTime,
+            user_id: new_id)
+          else
+            category = Category.new(title: calendar_data.summary, created_at: Time.current, updated_at: Time.current, user_id: cookies[:user_id])
+            if category.save!
+            new_category_id = Category.where(title: calendar_data.summary, user_id: cookies[:user_id])[0][:id]
+            work_time_self = WorkTime.new(time: calc_work_time(calendar_data.start.dateTime, calendar_data.end.dateTime),
+            category_id: new_category_id, created_at: calendar_data.start.dateTime, updated_at: calendar_data.end.dateTime,
+            user_id: new_id)
+            if work_time_self.save!
+              work_time_id = WorkTime.where(category_id: new_category_id, created_at: calendar_data.start.dateTime, user_id: cookies[:user_id])[0][:id]
+              #binding.pry
+              #users_lists = WorkUsersList.new(user_name: work_time_id: work_time_id, created_at: Time.current, updated_at: Time.current, user_id: cookies[:user_id])
+            end
+            end
+          end
         end
       end
       WorkTime.import work_times

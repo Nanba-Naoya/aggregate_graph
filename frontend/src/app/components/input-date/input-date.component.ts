@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
+import { ToastrService } from 'ngx-toastr';
 
 import { InputDateService } from '../services/input-date.service';
 import { Category } from '../category';
@@ -42,7 +43,8 @@ export class InputDateComponent implements OnInit {
 
   constructor(private inputdateService: InputDateService,
               private route: ActivatedRoute,
-              private cookieService: CookieService) {
+              private cookieService: CookieService,
+              private toastr: ToastrService) {
     this.form = new FormGroup({
       work_time: new FormControl(),
       hour: new FormControl(),
@@ -98,6 +100,7 @@ export class InputDateComponent implements OnInit {
   google_calendar(){
     this.inputdateService.getGoogleCalendar(this.google_data).subscribe((response) => {
       response = response;
+      this.toastr.success('googleカレンダーから取得しました！');
       if (this.cookieService.get('user_id') !== response['cookie']){
         this.cookieService.set('user_id', response['cookie'])
       }
@@ -114,6 +117,7 @@ export class InputDateComponent implements OnInit {
         if(response['status'] == 500){
           window.location.href = this.googleUrl
         }
+        this.toastr.success('業務時間を保存しました！');
       });
     }
 

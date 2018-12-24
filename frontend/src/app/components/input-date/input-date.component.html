@@ -1,5 +1,5 @@
 <div class="error" *ngIf="access">
-  <div class="parent">入力
+  <div class="parent">業務時間を入力
     <form class="form" [formGroup]="form">
       <div>
         <select formControlName="work_time" class="work_time" (change)="onChangeCategory($event)">
@@ -53,6 +53,6 @@
     <button class="add-category" routerLink="/create">カテゴリを追加する</button>
   </div>
   <button class="button-show-graph" type="button" routerLink="/normal-graph">グラフを表示する</button>
-  <button class="category-button" type="button" routerLink="/category-graph">カテゴリごとに表示する</button>
+  <button class="category-button" type="button" routerLink="/category-graph">カテゴリごとに表示する</button><br>
   <button class="google" type="button" (click)=google_calendar()>googleカレンダーの情報を取得する</button>
 </div>

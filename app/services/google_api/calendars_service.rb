@@ -33,7 +33,7 @@ module GoogleApi
       client.authorization.access_token = access_token
       calendar = client.discovered_api('calendar', 'v3')
       time_min = Time.utc(2018, 1, 1, 00, 00, 00).iso8601
-      time_max = Time.utc(2019, 12, 31, 23, 59, 59).iso8601
+      time_max = Time.utc(2018, 12, 31, 23, 59, 59).iso8601
       
       params = { 'calendarId' => 'primary',
         'orderBy' => 'startTime',
