@@ -43,11 +43,16 @@ export class CreateCategoryComponent implements OnInit {
       this.formErrors =  validateForm(this.form, true, this.validationMessages);
       this.CreateCategoryService.createCategories(this.form.value).subscribe(response => {
         response = response;
+        if(response['status'] == 400){
+        this.toastr.error(response['message']);
+        }
         if(response['status'] == 500){
           window.location.href = this.googleUrl
         }
+        if(response['status'] == 200){
+          this.toastr.success('カテゴリを保存しました！');
+        }
       })
-      this.toastr.success('カテゴリを保存しました！');
     } else {
       this.formErrors =  validateForm(this.form, false, this.validationMessages);
     }
