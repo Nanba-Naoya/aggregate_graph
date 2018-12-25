@@ -22,7 +22,7 @@ module Api::V1
 
     def import_work_times
       work_times = []
-
+      
       calendars_service = GoogleApi::CalendarsService.new
       if cookies[:user_id].nil?
         new_id = calendars_service.create_new_id(params)
@@ -44,22 +44,30 @@ module Api::V1
       else
         calendar_datas.each do |calendar_data|
           next unless calendar_data.start.date.nil?
-          if calendar_data.summary.include?('個人作業') == false
+          next if calendar_data.description.nil?
+          
+          if (calendar_data.summary.include?('個人作業') == false && calendar_data.description.include?('個人作業') == false)
             work_times << WorkTime.new(time: calc_work_time(calendar_data.start.dateTime, calendar_data.end.dateTime),
             category_id: category_id, created_at: calendar_data.start.dateTime, updated_at: calendar_data.end.dateTime,
             user_id: new_id)
           else
             category = Category.new(title: calendar_data.summary, created_at: Time.current, updated_at: Time.current, user_id: cookies[:user_id])
             if category.save!
-            new_category_id = Category.where(title: calendar_data.summary, user_id: cookies[:user_id])[0][:id]
-            work_time_self = WorkTime.new(time: calc_work_time(calendar_data.start.dateTime, calendar_data.end.dateTime),
-            category_id: new_category_id, created_at: calendar_data.start.dateTime, updated_at: calendar_data.end.dateTime,
-            user_id: new_id)
-            if work_time_self.save!
-              work_time_id = WorkTime.where(category_id: new_category_id, created_at: calendar_data.start.dateTime, user_id: cookies[:user_id])[0][:id]
-              #binding.pry
-              #users_lists = WorkUsersList.new(user_name: work_time_id: work_time_id, created_at: Time.current, updated_at: Time.current, user_id: cookies[:user_id])
-            end
+              new_category_id = Category.where(title: calendar_data.summary, user_id: cookies[:user_id])[0][:id]
+              work_time_self = WorkTime.new(time: calc_work_time(calendar_data.start.dateTime, calendar_data.end.dateTime),
+              category_id: new_category_id, created_at: calendar_data.start.dateTime, updated_at: calendar_data.end.dateTime,
+              user_id: new_id)
+              if work_time_self.save!
+                next if calendar_data.attendees.blank?
+                calendar_data.attendees.each do |attendee|
+                  unless (attendee['email'] == calendar_data.creator['email']) == true || (attendee['responseStatus'] == 'declined') == true
+                    /@/ =~ attendee['email']
+                    work_time_id = WorkTime.where(category_id: new_category_id, created_at: calendar_data.start.dateTime, user_id: cookies[:user_id])[0][:id]
+                    users_lists = WorkUsersList.new(user_name: $`,work_time_id: work_time_id, created_at: Time.current, updated_at: Time.current, user_id: cookies[:user_id])
+                    users_lists.save!
+                  end
+                end
+              end
             end
           end
         end

@@ -20,6 +20,7 @@ import { ShowGraphService } from './components/services/show-graph.service';
 import { ShowCategoryGraphComponent } from '../app/components/show-category-graph/show-category-graph.component';
 import { ShowNormalGraphComponent } from '../app/components/show-normal-graph/show-normal-graph.component';
 import { SelectDateComponent } from './shared/components/select-date/select-date.component';
+import { InputCodeComponent } from './components/input-code/input-code.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { SelectDateComponent } from './shared/components/select-date/select-date
     CreateCategoryComponent,
     ShowCategoryGraphComponent,
     ShowNormalGraphComponent,
-    SelectDateComponent
+    SelectDateComponent,
+    InputCodeComponent
   ],
   imports: [
     HttpClientModule,
@@ -38,9 +40,9 @@ import { SelectDateComponent } from './shared/components/select-date/select-date
     FormsModule,
     ReactiveFormsModule,
     AppRoutingModule,
-    BrowserAnimationsModule,    // add
+    BrowserAnimationsModule,
     ToastrModule.forRoot({
-      timeOut: 1500,
+      timeOut: 2000,
       positionClass: 'toast-top-center',
       preventDuplicates: false
     })

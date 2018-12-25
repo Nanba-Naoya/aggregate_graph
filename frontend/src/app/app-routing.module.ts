@@ -7,6 +7,7 @@ import { ShowCategoryGraphComponent } from './components/show-category-graph/sho
 import { ShowNormalGraphComponent } from './components/show-normal-graph/show-normal-graph.component';
 import { CreateCategoryComponent } from './components/create-category/create-category.component';
 import { TopMenuComponent } from './components/top-menu.component';
+import { InputCodeComponent } from './components/input-code/input-code.component';
 
 NgModule({
   imports: [
@@ -17,11 +18,13 @@ NgModule({
 
 const routes: Routes = [
   { path: '', component: InputDateComponent },
+  { path: 'callback', component: InputDateComponent },
   { path: 'show', component: ShowGraphComponent },
   { path: 'category-graph', component:ShowCategoryGraphComponent },
   { path: 'create', component: CreateCategoryComponent },
   { path: 'normal-graph', component: ShowNormalGraphComponent },
-  { path: 'top', component: TopMenuComponent }
+  { path: 'top', component: TopMenuComponent },
+  { path: 'code', component: InputCodeComponent}
 ]
 
 @NgModule({

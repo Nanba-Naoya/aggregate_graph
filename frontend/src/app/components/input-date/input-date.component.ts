@@ -55,25 +55,30 @@ export class InputDateComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getTemplate();
+    console.log(this.cookieService.get('code'))
+    if (this.cookieService.get('code') !== ''){
+      this.getTemplate();
+    } else{
+      
+    }
   }
 
   async getTemplate(){
     await this.getNewid();
-    this.inputdateService.getCategories(this.cookieService.get('user_id')).subscribe((response) => {
-      this.categories = response;
-    })
     this.inputdateService.getWorkTimesHour().subscribe((response) => {
       this.work_times_hour = response;
     })
     this.inputdateService.getWorkTimesMinute().subscribe((response) => {
       this.work_times_minute = response;
     })
+    this.inputdateService.getCategories(this.cookieService.get('user_id')).subscribe((response) => {
+      this.categories = response;
+    })
   }
   getNewid(){
     /*クエリが取れていたら*/
-    if (this.route.snapshot.queryParams['error'] !== 'access_denied'){
-      this.google_data = this.route.snapshot.queryParams['code'];
+    if (this.cookieService.get('code') !== ''){
+      this.google_data = this.cookieService.get('code');
       /*code以下を使ってgoogleカレンダー認証*/
       if(this.google_data !== undefined && this.cookieService.get('user_id') == ''){
         /*code以下がある、かつcookieがない場合のみとってくる*/
@@ -81,6 +86,7 @@ export class InputDateComponent implements OnInit {
           response = response;
           if (this.cookieService.get('user_id') !== response['cookie']){
             this.cookieService.set('user_id', response['user_id'])
+            /*カテゴリをとってくる*/
             this.inputdateService.getCategories(this.cookieService.get('user_id')).subscribe((response) => {
               this.categories = response;
             })
@@ -98,13 +104,18 @@ export class InputDateComponent implements OnInit {
   }
 
   google_calendar(){
-    this.inputdateService.getGoogleCalendar(this.google_data).subscribe((response) => {
-      response = response;
-      this.toastr.success('googleカレンダーから取得しました！');
-      if (this.cookieService.get('user_id') !== response['cookie']){
-        this.cookieService.set('user_id', response['cookie'])
-      }
-    })
+    if(this.cookieService.get('count') !== '1'){
+      this.inputdateService.getGoogleCalendar(this.google_data).subscribe((response) => {
+        response = response;
+        this.toastr.success('googleカレンダーから取得しました！');
+        this.cookieService.set('count', '1')
+        if (this.cookieService.get('user_id') !== response['cookie']){
+          this.cookieService.set('user_id', response['cookie'])
+        }
+      })
+    } else {
+      this.toastr.success('既に取得済みです');
+    }
   }
 
   onCreate() {
@@ -114,10 +125,15 @@ export class InputDateComponent implements OnInit {
       this.isError = false;
       this.inputdateService.createWorkTimes(this.form.value).subscribe(response => {
         response = response;
+        if(response['status'] == 400){
+          this.toastr.error('保存できませんでした。');
+        }
         if(response['status'] == 500){
           window.location.href = this.googleUrl
         }
-        this.toastr.success('業務時間を保存しました！');
+        if(response['status'] == 200){
+          this.toastr.success('業務時間を保存しました！');
+        }
       });
     }
 
