@@ -24,11 +24,13 @@ module Api::V1
       work_times = []
       
       calendars_service = GoogleApi::CalendarsService.new
+      #cookieにuser_idがあればカレンダーから取得、なければ作成
       if cookies[:user_id].nil?
         new_id = calendars_service.create_new_id(params)
         render json: { message: 'user_idを作成', status: 400, user_id: new_id}
         return
       else
+        #会議のカテゴリーidをとってくる
         access_token = calendars_service.refresh_token(cookies[:user_id])
         calendar_datas = calendars_service.calendar_api_refresh_token(access_token)
         new_id = cookies[:user_id]
@@ -43,14 +45,16 @@ module Api::V1
         end
       else
         calendar_datas.each do |calendar_data|
+          #終日、本文がない場合はスキップ
           next unless calendar_data.start.date.nil?
           next if calendar_data.description.nil?
-          
+          #個人作業が含まれていなかったら会議として保存
           if (calendar_data.summary.include?('個人作業') == false && calendar_data.description.include?('個人作業') == false)
             work_times << WorkTime.new(time: calc_work_time(calendar_data.start.dateTime, calendar_data.end.dateTime),
             category_id: category_id, created_at: calendar_data.start.dateTime, updated_at: calendar_data.end.dateTime,
             user_id: new_id)
           else
+            #含まれていた場合は新しいカテゴリとして保存し、業務時間を保存、user_listを保存
             category = Category.new(title: calendar_data.summary, created_at: Time.current, updated_at: Time.current, user_id: cookies[:user_id])
             if category.save!
               new_category_id = Category.where(title: calendar_data.summary, user_id: cookies[:user_id])[0][:id]
@@ -60,6 +64,7 @@ module Api::V1
               if work_time_self.save!
                 next if calendar_data.attendees.blank?
                 calendar_data.attendees.each do |attendee|
+                  #自分以外を保存、/@/ =~ attendee['email'] -> @を比較
                   unless (attendee['email'] == calendar_data.creator['email']) == true || (attendee['responseStatus'] == 'declined') == true
                     /@/ =~ attendee['email']
                     work_time_id = WorkTime.where(category_id: new_category_id, created_at: calendar_data.start.dateTime, user_id: cookies[:user_id])[0][:id]

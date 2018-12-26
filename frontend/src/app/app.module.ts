@@ -20,7 +20,6 @@ import { ShowGraphService } from './components/services/show-graph.service';
 import { ShowCategoryGraphComponent } from '../app/components/show-category-graph/show-category-graph.component';
 import { ShowNormalGraphComponent } from '../app/components/show-normal-graph/show-normal-graph.component';
 import { SelectDateComponent } from './shared/components/select-date/select-date.component';
-import { InputCodeComponent } from './components/input-code/input-code.component';
 
 @NgModule({
   declarations: [
@@ -31,8 +30,7 @@ import { InputCodeComponent } from './components/input-code/input-code.component
     CreateCategoryComponent,
     ShowCategoryGraphComponent,
     ShowNormalGraphComponent,
-    SelectDateComponent,
-    InputCodeComponent
+    SelectDateComponent
   ],
   imports: [
     HttpClientModule,

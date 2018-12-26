@@ -55,30 +55,24 @@ export class InputDateComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.cookieService.get('code'))
-    if (this.cookieService.get('code') !== ''){
-      this.getTemplate();
-    } else{
-      
-    }
-  }
-
-  async getTemplate(){
-    await this.getNewid();
+    this.getNewid();
     this.inputdateService.getWorkTimesHour().subscribe((response) => {
       this.work_times_hour = response;
     })
     this.inputdateService.getWorkTimesMinute().subscribe((response) => {
       this.work_times_minute = response;
     })
-    this.inputdateService.getCategories(this.cookieService.get('user_id')).subscribe((response) => {
-      this.categories = response;
-    })
+    if(this.cookieService.get('user_id') !== ''){
+      this.inputdateService.getCategories(this.cookieService.get('user_id')).subscribe((response) => {
+        this.categories = response;
+      })
+    }
   }
+
   getNewid(){
     /*クエリが取れていたら*/
-    if (this.cookieService.get('code') !== ''){
-      this.google_data = this.cookieService.get('code');
+    if (this.route.snapshot.queryParams['error'] !== 'access_denied'){
+      this.google_data = this.route.snapshot.queryParams['code'];
       /*code以下を使ってgoogleカレンダー認証*/
       if(this.google_data !== undefined && this.cookieService.get('user_id') == ''){
         /*code以下がある、かつcookieがない場合のみとってくる*/
@@ -86,7 +80,6 @@ export class InputDateComponent implements OnInit {
           response = response;
           if (this.cookieService.get('user_id') !== response['cookie']){
             this.cookieService.set('user_id', response['user_id'])
-            /*カテゴリをとってくる*/
             this.inputdateService.getCategories(this.cookieService.get('user_id')).subscribe((response) => {
               this.categories = response;
             })

@@ -7,7 +7,6 @@ import { ShowCategoryGraphComponent } from './components/show-category-graph/sho
 import { ShowNormalGraphComponent } from './components/show-normal-graph/show-normal-graph.component';
 import { CreateCategoryComponent } from './components/create-category/create-category.component';
 import { TopMenuComponent } from './components/top-menu.component';
-import { InputCodeComponent } from './components/input-code/input-code.component';
 
 NgModule({
   imports: [
@@ -23,8 +22,7 @@ const routes: Routes = [
   { path: 'category-graph', component:ShowCategoryGraphComponent },
   { path: 'create', component: CreateCategoryComponent },
   { path: 'normal-graph', component: ShowNormalGraphComponent },
-  { path: 'top', component: TopMenuComponent },
-  { path: 'code', component: InputCodeComponent}
+  { path: 'top', component: TopMenuComponent }
 ]
 
 @NgModule({

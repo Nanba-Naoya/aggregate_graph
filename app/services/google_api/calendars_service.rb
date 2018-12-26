@@ -3,27 +3,6 @@ require 'google/api_client'
 module GoogleApi
   class CalendarsService
 
-    def google_calendar_api(new_id)
-      access_token = JSON.parse(redis_instance.get(new_id))['access_token']
-      client = Google::APIClient.new(application_name: '')
-      client.authorization.client_id = ENV['CLIENT_ID']
-      client.authorization.client_secret = ENV['CLIENT_SECRET']
-      client.authorization.scope = ENV['SCOPE']
-      client.authorization.access_token = access_token
-      calendar = client.discovered_api('calendar', 'v3')
-      time_min = Time.utc(2018, 1, 1, 00, 00, 00).iso8601
-      time_max = Time.utc(2018, 12, 31, 23, 59, 59).iso8601
-      
-      params = { 'calendarId' => 'primary',
-        'orderBy' => 'startTime',
-        'timeMax' => time_max,
-        'timeMin' => time_min,
-        'singleEvents' => 'True' }
-      #google_apiを叩く
-      calendar_result = client.execute(api_method: calendar.events.list, parameters: params)
-      calendar_result.data.items
-    end
-
     def calendar_api_refresh_token(access_token)
       access_token = access_token
       client = Google::APIClient.new(application_name: '')
@@ -34,7 +13,6 @@ module GoogleApi
       calendar = client.discovered_api('calendar', 'v3')
       time_min = Time.utc(2018, 1, 1, 00, 00, 00).iso8601
       time_max = Time.utc(2018, 12, 31, 23, 59, 59).iso8601
-      
       params = { 'calendarId' => 'primary',
         'orderBy' => 'startTime',
         'timeMax' => time_max,
@@ -53,7 +31,7 @@ module GoogleApi
       oauth_request = Net::HTTP::Post.new(uri.request_uri)
       oauth_request["Content-Type"] = "application/json"
       oauth_request_params = {code: params[:query], grant_type: 'authorization_code',
-        redirect_uri: 'http://aggregate.classi.jp:4200', client_secret: ENV['CLIENT_SECRET'], client_id: ENV['CLIENT_ID']}
+        redirect_uri: 'http://localhost:4200', client_secret: ENV['CLIENT_SECRET'], client_id: ENV['CLIENT_ID']}
       oauth_request.body = oauth_request_params.to_json
       oauth_response = https.request(oauth_request)
       response = JSON.parse(oauth_response.body)
@@ -66,7 +44,7 @@ module GoogleApi
       https.use_ssl = true
       oauth_request = Net::HTTP::Post.new(uri.request_uri)
       oauth_request["Content-Type"] = "application/json"
-      oauth_request_params = {grant_type: 'refresh_token',　redirect_uri: 'http://aggregate.classi.jp:4200',
+      oauth_request_params = {grant_type: 'refresh_token',　redirect_uri: 'http://localhost:4200',
         refresh_token: JSON.parse(redis_instance.get(user_id))['refresh_token'], client_secret: ENV['CLIENT_SECRET'], client_id: ENV['CLIENT_ID']}
       oauth_request.body = oauth_request_params.to_json
       oauth_response = https.request(oauth_request)
@@ -82,7 +60,6 @@ module GoogleApi
       new_id = generate_uuid
       response = create_token(params)
       save_data = {
-        access_token: response['access_token'],
         refresh_token: response['refresh_token']
       }
       redis_instance.set(new_id, save_data.to_json)
