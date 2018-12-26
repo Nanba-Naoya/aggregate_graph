@@ -1,0 +1,21 @@
+.parent {
+  text-align: center;
+  display: block;
+ }
+
+ .list {
+   text-align: center;
+   display: block;
+ }
+
+ .button {
+  margin-top: 5px;
+ }
+
+ .add-category {
+   margin-top: 5px;
+ }
+
+ .button-show-graph {
+   margin-top: 5px;
+ }

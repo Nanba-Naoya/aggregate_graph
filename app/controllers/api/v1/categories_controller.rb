@@ -6,9 +6,21 @@ module Api::V1
       render json: @categories
     end
 
-    def show
-      @categories = Category.find(params[:id])
-      render json: @categories
+    def create
+      category = Category.new(category_params)
+      category.created_at = Time.current
+      category.updated_at = Time.current
+      category.user_id = 1111
+      category.save!
+      render json: { message: 'ok', status: 200 }
+    rescue ActiveRecord::RecordInvalid => e
+      render json: { message: e.record.errors.full_messages, status: 400 }
+    end
+
+    private
+
+    def category_params
+      params.require(:category).permit(:title, :created_at, :updated_at, :user_id)
     end
 
   end

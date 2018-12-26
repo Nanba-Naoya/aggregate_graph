@@ -1,20 +1,45 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { AppRoutingModule } from './app-routing.module'; 
 
 import { AppComponent } from './app.component';
 import { TopMenuComponent } from './components/top-menu.component';
-import { ShowGraphComponent } from './components/show-graph.component';
+import { ShowGraphComponent } from './components/show-graph/show-graph.component';
+import { InputDateComponent } from './components/input-date/input-date.component';
+import { CreateCategoryComponent } from './components/create-category/create-category.component';
+
+import { InputDateService } from './components/services/input-date.service';
+import { CreateCategoryService } from './components/services/create-category.service';
+import { ShowGraphService } from './components/services/show-graph.service';
+import { ShowCategoryGraphComponent } from '../app/components/show-category-graph/show-category-graph.component';
+import { ShowNormalGraphComponent } from '../app/components/show-normal-graph/show-normal-graph.component';
+import { SelectDateComponent } from './shared/components/select-date/select-date.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ShowGraphComponent,
-    TopMenuComponent
+    TopMenuComponent,
+    InputDateComponent,
+    CreateCategoryComponent,
+    ShowCategoryGraphComponent,
+    ShowNormalGraphComponent,
+    SelectDateComponent
   ],
   imports: [
-    BrowserModule
+    HttpClientModule,
+    BrowserModule,
+    FormsModule,
+    ReactiveFormsModule,
+    AppRoutingModule,
   ],
-  providers: [],
+  providers: [
+    InputDateService,
+    CreateCategoryService,
+    ShowGraphService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
