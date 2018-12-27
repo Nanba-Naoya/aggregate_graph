@@ -2,7 +2,7 @@
   <div class="parent">業務時間を入力
     <form class="form" [formGroup]="form">
       <div>
-        <select formControlName="work_time" class="work_time" (change)="onChangeCategory($event)">
+        <select formControlName="category_id" class="work_time" (change)="onChangeCategory($event)">
           <option class="category-select" [value]="null">
             カテゴリを選択
           </option>

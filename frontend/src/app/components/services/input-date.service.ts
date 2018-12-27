@@ -25,9 +25,9 @@ export class InputDateService {
     return this.http.get<Category>(url);
   }
 
-  createWorkTimes(work_time: WorkTime): Observable<WorkTime>{
+  createWorkTimes(params): Observable<WorkTime>{
     const url = `${this.apiEndpoint}/work_times`;
-    return this.http.post<WorkTime>(url, { work_time:  work_time});
+    return this.http.post<WorkTime>(url, params);
   }
 
   getWorkTimesHour(): Observable<WorkTimesHour> {

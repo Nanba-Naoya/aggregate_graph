@@ -5,7 +5,7 @@ AllCops:
 
 # ABC Metricで算出される
 Metrics/AbcSize:
-  Max: 15
+  Max: 30
 
 # 循環的複雑度
 Metrics/CyclomaticComplexity:
@@ -41,7 +41,7 @@ Style/Documentation:
 
 # Ruby3系にスムーズに移行するためにtrueにしておく
 Style/FrozenStringLiteralComment:
-  Enabled: true
+  Enabled: false
 
 # %記法の配列の括弧の種類を強制する
 Style/PercentLiteralDelimiters:

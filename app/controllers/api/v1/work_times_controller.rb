@@ -9,8 +9,8 @@ module Api::V1
 
     def create
       work_time = WorkTime.new(work_time_params)
-      work_time.time = hour_add_minute()
-      work_time.category_id = params[:work_time][:work_time]
+      work_time.time = hour_add_minute
+      work_time.category_id = params[:category_id]
       work_time.created_at = created_at
       work_time.updated_at = Time.current
       work_time.user_id = cookies[:user_id]
@@ -45,10 +45,9 @@ module Api::V1
         end
       else
         calendar_datas.each do |calendar_data|
-          #終日、本文がない場合はスキップ
-          next unless calendar_data.start.date.nil?
-          next if calendar_data.description.nil?
-          #個人作業が含まれていなかったら会議として保存
+          #終日と本文がない場合はスキップ
+          next if !(calendar_data.start.date.nil?) || calendar_data.description.nil?
+          #「個人作業」が含まれていなかったら会議として保存
           if (calendar_data.summary.include?('個人作業') == false && calendar_data.description.include?('個人作業') == false)
             work_times << WorkTime.new(time: calc_work_time(calendar_data.start.dateTime, calendar_data.end.dateTime),
             category_id: category_id, created_at: calendar_data.start.dateTime, updated_at: calendar_data.end.dateTime,
@@ -56,23 +55,18 @@ module Api::V1
           else
             #含まれていた場合は新しいカテゴリとして保存し、業務時間を保存、user_listを保存
             category = Category.new(title: calendar_data.summary, created_at: Time.current, updated_at: Time.current, user_id: cookies[:user_id])
-            if category.save!
-              new_category_id = Category.where(title: calendar_data.summary, user_id: cookies[:user_id])[0][:id]
-              work_time_self = WorkTime.new(time: calc_work_time(calendar_data.start.dateTime, calendar_data.end.dateTime),
-              category_id: new_category_id, created_at: calendar_data.start.dateTime, updated_at: calendar_data.end.dateTime,
-              user_id: new_id)
-              if work_time_self.save!
-                next if calendar_data.attendees.blank?
-                calendar_data.attendees.each do |attendee|
-                  #自分以外を保存、/@/ =~ attendee['email'] -> @を比較
-                  unless (attendee['email'] == calendar_data.creator['email']) == true || (attendee['responseStatus'] == 'declined') == true
-                    /@/ =~ attendee['email']
-                    work_time_id = WorkTime.where(category_id: new_category_id, created_at: calendar_data.start.dateTime, user_id: cookies[:user_id])[0][:id]
-                    users_lists = WorkUsersList.new(user_name: $`,work_time_id: work_time_id, created_at: Time.current, updated_at: Time.current, user_id: cookies[:user_id])
-                    users_lists.save!
-                  end
-                end
-              end
+            next unless category.save!
+            new_category_id = Category.where(title: calendar_data.summary, user_id: cookies[:user_id])[0][:id]
+            work_time_self = WorkTime.new(time: calc_work_time(calendar_data.start.dateTime, calendar_data.end.dateTime),
+            category_id: new_category_id, created_at: calendar_data.start.dateTime, updated_at: calendar_data.end.dateTime,user_id: new_id)
+            next unless work_time_self.save! || !(calendar_data.attendees.blank?)
+            calendar_data.attendees.each do |attendee|
+              #自分以外を保存、/@/ =~ attendee['email'] -> @を探して@以前を抽出
+              next if (attendee['email'] == calendar_data.creator['email']) == true || (attendee['responseStatus'] == 'declined') == true
+              /@/ =~ attendee['email']
+              work_time_id = WorkTime.where(category_id: new_category_id, created_at: calendar_data.start.dateTime, user_id: cookies[:user_id])[0][:id]
+              users_lists = WorkUsersList.new(user_name: $`,work_time_id: work_time_id, created_at: Time.current, updated_at: Time.current, user_id: cookies[:user_id])
+              users_lists.save!
             end
           end
         end
@@ -116,14 +110,14 @@ module Api::V1
 
     #時間と分を足す
     def hour_add_minute
-      hour = params[:work_time][:hour].to_i
-      minute = (params[:work_time][:minute].to_i / 60.to_f).round(1)
+      hour = params[:hour].to_i
+      minute = (params[:minute].to_i / 60.to_f).round(1)
       hour == 0 && minute == 0 ? '' : hour + minute
     end
 
     def created_at
       d = Date.today
-      "#{d.year}-#{params[:work_time][:month]}-#{params[:work_time][:day]}"
+      "#{d.year}-#{params[:month]}-#{params[:day]}"
     end
 
     #秒単位を時間単位に変換

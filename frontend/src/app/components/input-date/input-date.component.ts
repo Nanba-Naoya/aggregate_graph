@@ -6,7 +6,6 @@ import { ToastrService } from 'ngx-toastr';
 
 import { InputDateService } from '../services/input-date.service';
 import { Category } from '../category';
-import { WorkTime } from '../work_time';
 import { WorkTimesHour } from '../../shared/components/work_times_hour';
 import { WorkTimesMinute } from '../../shared/components/work_times_minute';
 import { environment } from '../../../environments/environment'
@@ -21,7 +20,6 @@ import { environment } from '../../../environments/environment'
 export class InputDateComponent implements OnInit {
   googleUrl = environment.googleUrl;
   categories: Category;
-  work_times: WorkTime;
   work_times_hour: WorkTimesHour;
   work_times_minute: WorkTimesMinute;
   form: FormGroup;
@@ -46,7 +44,7 @@ export class InputDateComponent implements OnInit {
               private cookieService: CookieService,
               private toastr: ToastrService) {
     this.form = new FormGroup({
-      work_time: new FormControl(),
+      category_id: new FormControl(),
       hour: new FormControl(),
       minute: new FormControl(),
       month: new FormControl(),
@@ -62,6 +60,7 @@ export class InputDateComponent implements OnInit {
     this.inputdateService.getWorkTimesMinute().subscribe((response) => {
       this.work_times_minute = response;
     })
+    /*cookieにuser_idがあればカテゴリをとってくる*/
     if(this.cookieService.get('user_id') !== ''){
       this.inputdateService.getCategories(this.cookieService.get('user_id')).subscribe((response) => {
         this.categories = response;
@@ -150,18 +149,14 @@ export class InputDateComponent implements OnInit {
 
   onChangeCategory($event){
     this.unselectCategory = ($event.target.value === 'null') ? true : false;
-    $event.target.value;
   }
 
   onChangeHour($event) {
     this.unselectHour = ($event.target.value === 'null') ? true : false;
-    $event.target.value;
-    
   }
 
   onChangeMinute($event){
     this.unselectMinute = ($event.target.value === 'null') ? true : false;
-    $event.target.value;
   }
 
   isUnSelect(){
