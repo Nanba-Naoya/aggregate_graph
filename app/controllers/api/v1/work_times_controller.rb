@@ -47,6 +47,8 @@ module Api::V1
         calendar_datas.each do |calendar_data|
           #終日と本文がない場合はスキップ
           next if !(calendar_data.start.date.nil?) || calendar_data.description.nil?
+          #全く同じデータは保存しない
+          binding.pry
           #「個人作業」が含まれていなかったら会議として保存
           if (calendar_data.summary.include?('個人作業') == false && calendar_data.description.include?('個人作業') == false)
             work_times << WorkTime.new(time: calc_work_time(calendar_data.start.dateTime, calendar_data.end.dateTime),
@@ -60,6 +62,7 @@ module Api::V1
             work_time_self = WorkTime.new(time: calc_work_time(calendar_data.start.dateTime, calendar_data.end.dateTime),
             category_id: new_category_id, created_at: calendar_data.start.dateTime, updated_at: calendar_data.end.dateTime,user_id: new_id)
             next unless work_time_self.save! || !(calendar_data.attendees.blank?)
+            #カレンダーから出席者を抽出
             calendar_data.attendees.each do |attendee|
               #自分以外を保存、/@/ =~ attendee['email'] -> @を探して@以前を抽出
               next if (attendee['email'] == calendar_data.creator['email']) == true || (attendee['responseStatus'] == 'declined') == true

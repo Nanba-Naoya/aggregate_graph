@@ -24,7 +24,7 @@ export class ShowGraphComponent {
 
   ngOnInit() {
     this.context = (<HTMLCanvasElement>this.ref.nativeElement).getContext('2d');
-    this.context.canvas.height = 100;
+    this.context.canvas.height = 300;
     this.draw('pie', this.getworktimes(this.data));
   }
 

@@ -4,17 +4,15 @@ module Api::V1
     def index
       users = Hash.new { |h, k| h[k] = [] }
       user_id = cookies[:user_id]
-      users_lists = {}
       work_times = params[:type_flag] == 'false' ? calctime(user_id) : calctime_category(user_id)
 
       work_times.each do |work_time|
         next if WorkUsersList.where(work_time_id: work_time[:id]).blank?
         title = Category.find(work_time[:category_id]).title
-        users_lists << WorkUsersList.where(work_time_id: work_time[:id])
-      end
-
-      users_lists.each do |users_list|
-        users[title].push(users_list[:user_name])
+        users_lists = WorkUsersList.where(work_time_id: work_time[:id])
+        users_lists.each do |users_list|
+          users[title].push(users_list[:user_name])
+        end
       end
       render json: users
     end

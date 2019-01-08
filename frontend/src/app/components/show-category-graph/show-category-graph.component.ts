@@ -75,7 +75,7 @@ export class ShowCategoryGraphComponent implements OnInit {
           
           var users_lists = [];
           for (var item in this.users){
-            users_lists.push(item+ ' : '+ this.users[item])
+            users_lists.push(this.users[item])
           }
           this.names = users_lists
 

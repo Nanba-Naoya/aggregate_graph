@@ -3,7 +3,6 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { CookieService } from 'ngx-cookie-service';
 import { ToastrService } from 'ngx-toastr';
 
-
 import { CreateCategoryService } from  '../services/create-category.service';
 import { validateForm } from '../../shared/functions/validate-form';
 import { environment } from '../../../environments/environment'
