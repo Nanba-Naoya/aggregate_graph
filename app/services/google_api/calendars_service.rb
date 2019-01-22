@@ -30,8 +30,8 @@ module GoogleApi
       https.use_ssl = true
       oauth_request = Net::HTTP::Post.new(uri.request_uri)
       oauth_request["Content-Type"] = "application/json"
-      oauth_request_params = {code: params[:query], grant_type: 'authorization_code',
-        redirect_uri: 'http://aggregate.classi.jp:4200', client_secret: ENV['CLIENT_SECRET'], client_id: ENV['CLIENT_ID']}
+      oauth_request_params = {code: params[:code], grant_type: 'authorization_code',
+        redirect_uri: 'http://aggregate.classi.jp:4201', client_secret: ENV['CLIENT_SECRET'], client_id: ENV['CLIENT_ID']}
       oauth_request.body = oauth_request_params.to_json
       oauth_response = https.request(oauth_request)
       response = JSON.parse(oauth_response.body)
@@ -44,7 +44,7 @@ module GoogleApi
       https.use_ssl = true
       oauth_request = Net::HTTP::Post.new(uri.request_uri)
       oauth_request["Content-Type"] = "application/json"
-      oauth_request_params = {grant_type: 'refresh_token',　redirect_uri: 'http://aggregate.classi.jp:4200',
+      oauth_request_params = {grant_type: 'refresh_token',　redirect_uri: 'http://aggregate.classi.jp:4201',
         refresh_token: JSON.parse(redis_instance.get(user_id))['refresh_token'], client_secret: ENV['CLIENT_SECRET'], client_id: ENV['CLIENT_ID']}
       oauth_request.body = oauth_request_params.to_json
       oauth_response = https.request(oauth_request)

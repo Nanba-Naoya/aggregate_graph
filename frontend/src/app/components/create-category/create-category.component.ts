@@ -49,7 +49,7 @@ export class CreateCategoryComponent implements OnInit {
           window.location.href = this.googleUrl
         }
         if(response['status'] == 200){
-          this.toastr.success('カテゴリを保存しました！');
+          this.toastr.success(response['message']);
         }
       })
     } else {

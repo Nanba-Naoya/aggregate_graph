@@ -3,6 +3,7 @@ class WorkTime < ApplicationRecord
   validates :time, presence: true
 
   scope :of_search, ->(user_id, date) { joins(:category).where("work_times.user_id = ? and work_times.created_at LIKE ?", "#{user_id}", "2019-#{date}%")}
+  scope :search_same_data, ->(time, created_at, user_id) { where(time: time, created_at: created_at, user_id: user_id) }
   
   class << self
     def aggregate_by_title(user_id, date)

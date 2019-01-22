@@ -34,6 +34,7 @@ export class ShowCategoryGraphComponent implements OnInit {
       month: new FormControl(),
       day: new FormControl(),
       type_flag: new FormControl(),
+      user_id: new FormControl()
     });
    }
 
@@ -41,6 +42,7 @@ export class ShowCategoryGraphComponent implements OnInit {
     if (this.cookieService.get('user_id') == ''){
       window.location.href = this.googleUrl
     }
+    this.form['user_id'] = this.cookieService.get('user_id')
   }
 
   onReceiveCategory_id(eventData) {

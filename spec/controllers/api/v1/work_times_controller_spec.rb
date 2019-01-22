@@ -123,7 +123,7 @@ RSpec.describe Api::V1::WorkTimesController, type: :controller do
     before do
       allow_any_instance_of(Google::CalendarsService).to receive(:google_calendar_api)
       .and_return [summary: "テスト", description: "テスト", start: {dateTime: DateTime.parse("2018-12-17 12:00:00")}, end: {dateTime: DateTime.parse('2018-12-17 13:00:00')}]
-      post :import_work_times
+      post :import
     end
     it 'responseが正しいか' do
       expect(JSON.parse(response.body)['message']).to eq('ok')

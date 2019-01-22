@@ -73,9 +73,9 @@ export class InputDateComponent implements OnInit {
     if (this.route.snapshot.queryParams['error'] !== 'access_denied'){
       this.google_data = this.route.snapshot.queryParams['code'];
       /*code以下を使ってgoogleカレンダー認証*/
-      if(this.google_data !== undefined && this.cookieService.get('user_id') == ''){
-        /*code以下がある、かつcookieがない場合のみとってくる*/
-        this.inputdateService.getGoogleCalendar(this.google_data).subscribe((response) => {
+      if(this.google_data !== undefined){
+        /*code以下がある場合とってくる*/
+        this.inputdateService.createCookie(this.google_data).subscribe((response) => {
           response = response;
           if (this.cookieService.get('user_id') !== response['cookie']){
             this.cookieService.set('user_id', response['user_id'])
@@ -96,18 +96,13 @@ export class InputDateComponent implements OnInit {
   }
 
   google_calendar(){
-    if(this.cookieService.get('count') !== '1'){
-      this.inputdateService.getGoogleCalendar(this.google_data).subscribe((response) => {
+      this.inputdateService.getGoogleCalendar(this.cookieService.get('user_id')).subscribe((response) => {
         response = response;
         this.toastr.success('googleカレンダーから取得しました！');
-        this.cookieService.set('count', '1')
         if (this.cookieService.get('user_id') !== response['cookie']){
           this.cookieService.set('user_id', response['cookie'])
         }
       })
-    } else {
-      this.toastr.success('既に取得済みです');
-    }
   }
 
   onCreate() {
@@ -124,7 +119,7 @@ export class InputDateComponent implements OnInit {
           window.location.href = this.googleUrl
         }
         if(response['status'] == 200){
-          this.toastr.success('業務時間を保存しました！');
+          this.toastr.success(response['message']);
         }
       });
     }

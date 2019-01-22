@@ -11,14 +11,14 @@ module Api::V1
     def create
       category = Category.new(category_params)
       unless Category.search_title(category.title, cookies[:user_id]).blank?
-        render json: { message: '同じカテゴリが存在します', status: 400 }
+        render json: { message: I18n.t('category_exist'), status: 400 }
         return
       end
       category.created_at = Time.current
       category.updated_at = Time.current
       category.user_id = cookies[:user_id]
       category.save!
-      render json: { message: 'ok', status: 200 }
+      render json: { message: I18n.t('create_category_message'), status: 200 }
     rescue ActiveRecord::RecordInvalid => e
       render json: { message: e.record.errors.full_messages, status: 400 }
     end
@@ -26,7 +26,7 @@ module Api::V1
     private
 
     def check_cookie
-      return render json: { message: 'クッキーが消去されました', status: 500 } if cookies[:user_id].nil?
+      return render json: { message: I18n.t('unknown_cookie'), status: 500 } if cookies[:user_id].nil?
     end
 
     def create_first_category

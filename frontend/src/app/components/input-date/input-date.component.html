@@ -44,7 +44,7 @@
             {{ work_time_minute.minute }}分
           </option>
         </select><br>
-        <button type="button" class="button" (click)=onCreate()>保存</button>
+        <button type="button" class="button" (click)=onCreate()>保存</button><br><br>
       </div>
       <div class="error-popup" *ngIf="isError">
         全て選択してください。
@@ -53,6 +53,7 @@
     <button class="add-category" routerLink="/create">カテゴリを追加する</button>
   </div>
   <button class="button-show-graph" type="button" routerLink="/normal-graph">グラフを表示する</button>
-  <button class="category-button" type="button" routerLink="/category-graph">カテゴリごとに表示する</button><br>
-  <button class="google" type="button" (click)=google_calendar()>googleカレンダーの情報を取得する</button>
+  <button class="category-button" type="button" routerLink="/category-graph">カテゴリごとに表示する</button><br><br>
+  <button class="google" type="button" (click)=google_calendar()>googleカレンダーの情報を取得する</button><br>
+  ※「個人作業」が含まれているものは別カテゴリとして保存します。
 </div>
