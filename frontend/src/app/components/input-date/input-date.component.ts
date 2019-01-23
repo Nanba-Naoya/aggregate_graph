@@ -73,13 +73,16 @@ export class InputDateComponent implements OnInit {
     if (this.route.snapshot.queryParams['error'] !== 'access_denied'){
       this.google_data = this.route.snapshot.queryParams['code'];
       /*code以下を使ってgoogleカレンダー認証*/
-      if(this.google_data !== undefined){
+      if(this.google_data !== undefined && this.cookieService.get('user_id') == ''){
         /*code以下がある場合とってくる*/
         this.inputdateService.createCookie(this.google_data).subscribe((response) => {
           response = response;
           if (this.cookieService.get('user_id') !== response['cookie']){
             this.cookieService.set('user_id', response['user_id'])
-            this.inputdateService.getCategories(this.cookieService.get('user_id')).subscribe((response) => {
+            this.inputdateService.getGoogleCalendar(response['user_id']).subscribe((res) => {
+              res = res;
+            })
+            this.inputdateService.getCategories(response['user_id']).subscribe((response) => {
               this.categories = response;
             })
           }
