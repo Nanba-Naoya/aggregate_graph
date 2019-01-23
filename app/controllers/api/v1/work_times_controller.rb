@@ -1,6 +1,5 @@
 module Api::V1
   class WorkTimesController < ApplicationController
-    before_action :check_cookie, only: [:index, :create]
 
     def index
       work_times = aggregate_time(params[:user_id])
@@ -24,7 +23,7 @@ module Api::V1
 
     def import
       calendars_service = GoogleApi::CalendarsService.new
-      
+
       # 会議のカテゴリーidをとってくる
       access_token = calendars_service.refresh_token(params[:user_id])
       calendar_datas = calendars_service.calendar_api_refresh_token(access_token)
@@ -41,14 +40,6 @@ module Api::V1
     end
 
     private
-
-    # cookieをチェック
-    def check_cookie
-      if cookies[:user_id].nil?
-        render json: { message: I18n.t('unknown_cookie'), status: 500 }
-        return
-      end
-    end
 
     def divide_calendar_datas(calendar_datas, category_id, new_id)
       work_times = []

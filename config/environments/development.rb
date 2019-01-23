@@ -61,9 +61,8 @@ Rails.application.configure do
 
   config.middleware.insert_before ActionDispatch::Static, Rack::Cors do
     allow do
-      origins /http:*/
-      resource '*', :headers => :any, :methods => [:get, :put, :post, :delete, :options, :head],
-      credentials: true
+      origins '*'
+      resource '*', :headers => :any, :methods => [:get, :put, :post, :delete, :options, :head]
     end
   end
 end

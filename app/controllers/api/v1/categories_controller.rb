@@ -4,7 +4,7 @@ module Api::V1
     before_action :create_first_category, only: :show
 
     def show
-      @categories = Category.search_category(cookies[:user_id])
+      @categories = Category.search_category(params[:id])
       render json: @categories
     end
 
@@ -31,8 +31,8 @@ module Api::V1
 
     def create_first_category
       #カテゴリがなかったら作る
-      if Category.search_category(cookies[:user_id]).blank?
-        category = Category.new(title: '会議', created_at: Time.current, updated_at: Time.current, user_id: cookies[:user_id])
+      if Category.search_category(params[:id]).blank?
+        category = Category.new(title: '会議', created_at: Time.current, updated_at: Time.current, user_id: params[:id])
         category.save!
       end
     end
