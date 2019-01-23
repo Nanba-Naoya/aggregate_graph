@@ -16,6 +16,7 @@ import { environment } from '../../../environments/environment'
 export class CreateCategoryComponent implements OnInit {
   googleUrl = environment.googleUrl;
   form: FormGroup;
+  params = {title: '', user_id: ''};
   formErrors: {[key: string]: Array<string>}= {};
   validationMessages = {
     'title': {
@@ -38,9 +39,11 @@ export class CreateCategoryComponent implements OnInit {
   }
 
   onSubmit() {
+    this.params['title'] = this.form.value['title'];
+    this.params['user_id'] = this.cookieService.get('user_id');
     if (this.form.valid) {
       this.formErrors =  validateForm(this.form, true, this.validationMessages);
-      this.CreateCategoryService.createCategories(this.form.value).subscribe(response => {
+      this.CreateCategoryService.createCategories(this.params).subscribe(response => {
         response = response;
         if(response['status'] == 400){
         this.toastr.error(response['message']);
