@@ -21,7 +21,7 @@ RSpec.describe Api::V1::CategoriesController, type: :controller do
   describe "POST #create" do
     context 'リクエストが正しい場合' do
       before do
-        post :create, params: {input_data: {title: 'テスト', user_id: 1}}
+        post :create, params: {title: 'テスト', user_id: 1}
       end
       it 'responseが正しいか' do
         expect(JSON.parse(response.body)['message']).to eq('カテゴリを作成しました。')
@@ -32,7 +32,7 @@ RSpec.describe Api::V1::CategoriesController, type: :controller do
 
     context 'titleが空白の場合' do
       before do
-        post :create, params: {input_data: {title: '', user_id: 1}}
+        post :create, params: {title: '', user_id: 1}
       end
       it 'エラーが返ってきている' do
         expect(JSON.parse(response.body)['message']).to eq(["Title translation missing: ja.activerecord.errors.models.category.attributes.title.blank"])
