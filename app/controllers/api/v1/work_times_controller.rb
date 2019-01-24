@@ -66,7 +66,7 @@ module Api::V1
     end
 
     def create_category(calendar_data, new_id)
-      category = Category.new(title: calendar_data.summary, created_at: Time.current, updated_at: Time.current, user_id: params[:user_id])
+      category = Category.new(title: calendar_data.summary, user_id: params[:user_id])
       category.save! if Category.where(title: calendar_data.summary, user_id: params[:user_id]).blank?
       @new_category_id = Category.search_id(calendar_data.summary, params[:user_id])[0]
       work_time_self = WorkTime.new(time: calc_work_time(calendar_data.start.dateTime, calendar_data.end.dateTime),
@@ -81,7 +81,7 @@ module Api::V1
         next if (attendee['email'] == calendar_data.creator['email']) == true || (attendee['responseStatus'] == 'declined') == true
         /@/ =~ attendee['email']
         work_time_id = WorkTime.where(category_id: @new_category_id, created_at: calendar_data.start.dateTime, user_id: params[:user_id])[0][:id]
-        users_lists << WorkUsersList.new(user_name: $`,work_time_id: work_time_id, created_at: Time.current, updated_at: Time.current, user_id: params[:user_id])
+        users_lists << WorkUsersList.new(user_name: $`,work_time_id: work_time_id, user_id: params[:user_id])
       end
       WorkUsersList.import users_lists
     end
