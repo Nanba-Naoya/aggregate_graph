@@ -113,7 +113,7 @@ export class InputDateComponent implements OnInit {
       this.isError = true;
     } else {
       this.isError = false;
-      this.inputdateService.createWorkTimes(this.form.value).subscribe(response => {
+      this.inputdateService.createWorkTimes(this.onCreateParams()).subscribe(response => {
         response = response;
         if(response['status'] == 400){
           this.toastr.error('保存できませんでした。');
@@ -155,6 +155,11 @@ export class InputDateComponent implements OnInit {
 
   onChangeMinute($event){
     this.unselectMinute = ($event.target.value === 'null') ? true : false;
+  }
+
+  onCreateParams(){
+    var data = { month: this.month , day: this.day, hour: this.form.value['hour'], minute: this.form.value['minute'], category_id: this.form.value['category_id'], user_id: this.cookieService.get('user_id')}
+    return data
   }
 
   isUnSelect(){

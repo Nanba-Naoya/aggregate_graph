@@ -3,8 +3,6 @@ import { CookieService } from 'ngx-cookie-service';
 import { ToastrService } from 'ngx-toastr';
 
 import { ShowGraphService } from '../services/show-graph.service'
-import { Category } from '../category';
-import { FormGroup, FormControl } from '@angular/forms';
 import { environment } from '../../../environments/environment'
 
 @Component({
@@ -14,8 +12,6 @@ import { environment } from '../../../environments/environment'
 })
 export class ShowNormalGraphComponent implements OnInit {
   googleUrl = environment.googleUrl;
-  form: FormGroup
-  categories: Category;
   month;
   day;
   category_flag = false;
@@ -24,47 +20,45 @@ export class ShowNormalGraphComponent implements OnInit {
   data;
   users;
   names;
-  lists;
   eventData;
 
   constructor(private showGraphService: ShowGraphService,
               private cookieService: CookieService,
-              private toastr: ToastrService) {
-    this.form = new FormGroup({
-      month: new FormControl(),
-      day: new FormControl(),
-      type_flag: new FormControl(),
-      user_id: new FormControl()
-    });
-   }
+              private toastr: ToastrService) {}
 
   ngOnInit() {
     if (this.cookieService.get('user_id') == ''){
       window.location.href = this.googleUrl
     }
-    this.form['user_id'] = this.cookieService.get('user_id')
   }
 
   onReceiveMonth(eventData) {
     if (eventData !== null){
       this.change = false
       this.month = eventData
-      this.form['month'] = eventData
     }
   }
 
   onReceiveDay(eventData) {
       this.change = false
       this.day = eventData;
-      this.form['day'] = eventData
+  }
+
+  onCreateParams(){
+    if (this.day == undefined || this.day == 'null'){
+      var month_params = { month: this.month , type_flag: false, user_id: this.cookieService.get('user_id')}
+      return month_params
+    } else {
+      var day_params = { month: this.month , day: this.day, type_flag: false, user_id: this.cookieService.get('user_id')}
+      return day_params
+    }
   }
 
   onShowGraph(){
-    this.form['type_flag'] = false
-    if (this.form['month'] !== undefined){
-      this.showGraphService.getWorkTimes(this.form).subscribe((response) => {
+    if (this.month !== undefined){
+      this.showGraphService.getWorkTimes(this.onCreateParams()).subscribe((response) => {
         this.data = response;
-        this.showGraphService.getUsrsLists(this.form).subscribe((response)=> {
+        this.showGraphService.getUsrsLists(this.onCreateParams()).subscribe((response)=> {
           this.users = response;
           
           var users_lists = [];
