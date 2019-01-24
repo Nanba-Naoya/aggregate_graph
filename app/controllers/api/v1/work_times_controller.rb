@@ -27,36 +27,35 @@ module Api::V1
       # 会議のカテゴリーidをとってくる
       access_token = calendars_service.refresh_token(params[:user_id])
       calendar_datas = calendars_service.calendar_api_refresh_token(access_token)
-      new_id = params[:user_id]
       category_id = check_category_id
 
       # テストの場合の処理
-      work_times = Rails.env == 'test' ? test(calendar_datas) : divide_calendar_datas(calendar_datas, category_id, new_id)
+      work_times = Rails.env == 'test' ? test(calendar_datas) : divide_calendar_datas(calendar_datas, category_id)
 
       WorkTime.import work_times
-      render json: { message: I18n.t('seach_google_calendar'), status: 200 , cookie: new_id}
+      render json: { message: I18n.t('seach_google_calendar'), status: 200 , cookie: params[:user_id]}
     rescue => e
       render json: { message: e, status: 500}
     end
 
     private
 
-    def divide_calendar_datas(calendar_datas, category_id, new_id)
+    def divide_calendar_datas(calendar_datas, category_id)
       work_times = []
 
       calendar_datas.each do |calendar_data|
         # カレンダーのデータに終日と本文がない場合はスキップ
         next if !(calendar_data.start.date.nil?) || calendar_data.description.nil?
         # 全く同じデータは保存しない
-        next unless WorkTime.search_same_data(calc_work_time(calendar_data.start.dateTime, calendar_data.end.dateTime), calendar_data.start.dateTime, new_id).blank?
+        next unless WorkTime.search_same_data(calc_work_time(calendar_data.start.dateTime, calendar_data.end.dateTime), calendar_data.start.dateTime, params[:user_id]).blank?
         # 「個人作業」が含まれていなかったら会議として保存
         if (calendar_data.summary.include?('個人作業') == false && calendar_data.description.include?('個人作業') == false)
           work_times << WorkTime.new(time: calc_work_time(calendar_data.start.dateTime, calendar_data.end.dateTime),
                                     category_id: category_id, created_at: calendar_data.start.dateTime, updated_at: calendar_data.end.dateTime,
-                                    user_id: new_id)
+                                    user_id: params[:user_id])
         else
           # 個人作業」が含まれていた場合は新しいカテゴリとして保存し、業務時間を保存、user_listを保存
-          work_time_self = create_category(calendar_data, new_id)
+          work_time_self = create_category(calendar_data)
           next unless work_time_self.save! || !(calendar_data.attendees.blank?)
           # カレンダーから出席者を抽出
           import_attendees(calendar_data)
@@ -65,12 +64,12 @@ module Api::V1
       work_times
     end
 
-    def create_category(calendar_data, new_id)
+    def create_category(calendar_data)
       category = Category.new(title: calendar_data.summary, created_at: Time.current, updated_at: Time.current, user_id: params[:user_id])
       category.save! if Category.where(title: calendar_data.summary, user_id: params[:user_id]).blank?
       @new_category_id = Category.search_id(calendar_data.summary, params[:user_id])[0]
       work_time_self = WorkTime.new(time: calc_work_time(calendar_data.start.dateTime, calendar_data.end.dateTime),
-      category_id: @new_category_id, created_at: calendar_data.start.dateTime, updated_at: calendar_data.end.dateTime,user_id: new_id)
+      category_id: @new_category_id, created_at: calendar_data.start.dateTime, updated_at: calendar_data.end.dateTime,user_id: params[:user_id])
     end
 
     def import_attendees(calendar_data)
