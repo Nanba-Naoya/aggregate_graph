@@ -12,8 +12,7 @@ module Api::V1
         render json: { message: I18n.t('category_exist'), status: 400 }
         return
       end
-      category = Category.new(title: params[:title], created_at: Time.current,
-                              updated_at: Time.current, user_id: params[:user_id])
+      category = Category.new(title: params[:title], user_id: params[:user_id])
       category.save!
       render json: { message: I18n.t('create_category_message'), status: 200 }
     rescue ActiveRecord::RecordInvalid => e
