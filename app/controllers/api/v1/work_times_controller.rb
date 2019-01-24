@@ -8,7 +8,7 @@ module Api::V1
 
     def create
       work_time = WorkTime.new(time: hour_add_minute, category_id: params[:category_id], created_at: created_at,
-                              updated_at: Time.current, user_id: params[:user_id])
+                              user_id: params[:user_id])
       work_time.save!
       render json: { message: I18n.t('create_work_time_message'), status: 200 }
     rescue ActiveRecord::RecordInvalid => e
