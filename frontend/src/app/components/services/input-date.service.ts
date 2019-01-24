@@ -20,14 +20,14 @@ export class InputDateService {
 
   constructor(private http: HttpClient) { }
 
-  getCategories(): Observable<Category> {
-    const url = `${this.apiEndpoint}/categories`;
+  getCategories(user_id): Observable<Category> {
+    const url = `${this.apiEndpoint}/categories/${user_id}`;
     return this.http.get<Category>(url);
   }
 
-  createWorkTimes(work_time: WorkTime): Observable<WorkTime>{
+  createWorkTimes(params): Observable<WorkTime>{
     const url = `${this.apiEndpoint}/work_times`;
-    return this.http.post<WorkTime>(url, { work_time:  work_time});
+    return this.http.post<WorkTime>(url, params);
   }
 
   getWorkTimesHour(): Observable<WorkTimesHour> {
@@ -40,9 +40,14 @@ export class InputDateService {
     return this.http.get<WorkTimesMinute>(url);
   }
 
-  getGoogleCalendar(queryParams: string): Observable<string>{
-    const url = `${this.apiEndpoint}/work_times/import_work_times`;
-    return this.http.post<string>(url, {query: queryParams});
+  getGoogleCalendar(user_id: string): Observable<string>{
+    const url = `${this.apiEndpoint}/work_times/import`;
+    return this.http.post<string>(url, {user_id: user_id});
+  }
+
+  createCookie(code: string): Observable<string>{
+    const url = `${this.apiEndpoint}/work_times/create_cookie`;
+    return this.http.post<string>(url, {code: code});
   }
 
 }

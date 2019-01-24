@@ -14,8 +14,8 @@ export class CreateCategoryService {
 
   constructor(private http: HttpClient) { }
 
-  createCategories(category: Category): Observable<Category>{
+  createCategories(params): Observable<Category>{
     const url = `${this.apiEndpoint}/categories`;
-    return this.http.post<Category>(url, { category: category });
+    return this.http.post<Category>(url, params);
   }
 }

@@ -3,5 +3,5 @@ create_table "work_times", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHAR
   t.bigint "category_id", null: false
   t.datetime "created_at", null: false
   t.datetime "updated_at", null: false
-  t.integer  "user_id", null: false
+  t.string  "user_id", null: false
 end

@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
+import { ToastrService } from 'ngx-toastr';
 
 import { InputDateService } from '../services/input-date.service';
 import { Category } from '../category';
-import { WorkTime } from '../work_time';
 import { WorkTimesHour } from '../../shared/components/work_times_hour';
 import { WorkTimesMinute } from '../../shared/components/work_times_minute';
 import { environment } from '../../../environments/environment'
@@ -19,7 +20,6 @@ import { environment } from '../../../environments/environment'
 export class InputDateComponent implements OnInit {
   googleUrl = environment.googleUrl;
   categories: Category;
-  work_times: WorkTime;
   work_times_hour: WorkTimesHour;
   work_times_minute: WorkTimesMinute;
   form: FormGroup;
@@ -36,12 +36,15 @@ export class InputDateComponent implements OnInit {
   unselectHour = true;
   unselectMinute = true;
   isError = false;
+  access = false;
   google_data;
 
   constructor(private inputdateService: InputDateService,
-              private route: ActivatedRoute) {
+              private route: ActivatedRoute,
+              private cookieService: CookieService,
+              private toastr: ToastrService) {
     this.form = new FormGroup({
-      work_time: new FormControl(),
+      category_id: new FormControl(),
       hour: new FormControl(),
       minute: new FormControl(),
       month: new FormControl(),
@@ -50,22 +53,59 @@ export class InputDateComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.inputdateService.getCategories().subscribe((response) => {
-      this.categories = response;
-    })
+    this.getNewid();
     this.inputdateService.getWorkTimesHour().subscribe((response) => {
       this.work_times_hour = response;
     })
     this.inputdateService.getWorkTimesMinute().subscribe((response) => {
       this.work_times_minute = response;
     })
-    this.google_data = this.route.snapshot.queryParams['code'];
+    /*cookieにuser_idがあればカテゴリをとってくる*/
+    if(this.cookieService.get('user_id') !== ''){
+      this.inputdateService.getCategories(this.cookieService.get('user_id')).subscribe((response) => {
+        this.categories = response;
+      })
+    }
+  }
+
+  getNewid(){
+    /*クエリが取れていたら*/
+    if (this.route.snapshot.queryParams['error'] !== 'access_denied'){
+      this.google_data = this.route.snapshot.queryParams['code'];
+      /*code以下を使ってgoogleカレンダー認証*/
+      if(this.google_data !== undefined && this.cookieService.get('user_id') == ''){
+        /*code以下がある場合とってくる*/
+        this.inputdateService.createCookie(this.google_data).subscribe((response) => {
+          response = response;
+          if (this.cookieService.get('user_id') !== response['cookie']){
+            this.cookieService.set('user_id', response['user_id'])
+            this.inputdateService.getGoogleCalendar(response['user_id']).subscribe((res) => {
+              res = res;
+            })
+            this.inputdateService.getCategories(response['user_id']).subscribe((response) => {
+              this.categories = response;
+            })
+          }
+        })
+      } else {
+        if (this.cookieService.get('user_id') == ''){
+          window.location.href = this.googleUrl
+        }
+      }
+      this.access = true;
+    } else {
+      this.access = false;
+    }
   }
 
   google_calendar(){
-    this.inputdateService.getGoogleCalendar(this.google_data).subscribe((response) => {
-      response = response;
-    })
+      this.inputdateService.getGoogleCalendar(this.cookieService.get('user_id')).subscribe((response) => {
+        response = response;
+        this.toastr.success('googleカレンダーから取得しました！');
+        if (this.cookieService.get('user_id') !== response['cookie']){
+          this.cookieService.set('user_id', response['cookie'])
+        }
+      })
   }
 
   onCreate() {
@@ -73,8 +113,17 @@ export class InputDateComponent implements OnInit {
       this.isError = true;
     } else {
       this.isError = false;
-      this.inputdateService.createWorkTimes(this.form.value).subscribe(response => {
+      this.inputdateService.createWorkTimes(this.onCreateParams()).subscribe(response => {
         response = response;
+        if(response['status'] == 400){
+          this.toastr.error('保存できませんでした。');
+        }
+        if(response['status'] == 500){
+          window.location.href = this.googleUrl
+        }
+        if(response['status'] == 200){
+          this.toastr.success(response['message']);
+        }
       });
     }
 
@@ -98,18 +147,19 @@ export class InputDateComponent implements OnInit {
 
   onChangeCategory($event){
     this.unselectCategory = ($event.target.value === 'null') ? true : false;
-    $event.target.value;
   }
 
   onChangeHour($event) {
     this.unselectHour = ($event.target.value === 'null') ? true : false;
-    $event.target.value;
-    
   }
 
   onChangeMinute($event){
     this.unselectMinute = ($event.target.value === 'null') ? true : false;
-    $event.target.value;
+  }
+
+  onCreateParams(){
+    var data = { month: this.month , day: this.day, hour: this.form.value['hour'], minute: this.form.value['minute'], category_id: this.form.value['category_id'], user_id: this.cookieService.get('user_id')}
+    return data
   }
 
   isUnSelect(){

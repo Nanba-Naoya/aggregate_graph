@@ -1,26 +1,33 @@
 module Api::V1
   class CategoriesController < ApplicationController
+    before_action :create_first_category, only: :show
 
-    def index
-      @categories = Category.all
+    def show
+      @categories = Category.search_category(params[:id])
       render json: @categories
     end
 
     def create
-      category = Category.new(category_params)
-      category.created_at = Time.current
-      category.updated_at = Time.current
-      category.user_id = 1111
+      unless Category.search_title(params[:title], params[:user_id]).blank?
+        render json: { message: I18n.t('category_exist'), status: 400 }
+        return
+      end
+      category = Category.new(title: params[:title], created_at: Time.current,
+                              updated_at: Time.current, user_id: params[:user_id])
       category.save!
-      render json: { message: 'ok', status: 200 }
+      render json: { message: I18n.t('create_category_message'), status: 200 }
     rescue ActiveRecord::RecordInvalid => e
       render json: { message: e.record.errors.full_messages, status: 400 }
     end
 
     private
 
-    def category_params
-      params.require(:category).permit(:title, :created_at, :updated_at, :user_id)
+    def create_first_category
+      #カテゴリがなかったら作る
+      if Category.search_category(params[:id]).blank?
+        category = Category.new(title: '会議', created_at: Time.current, updated_at: Time.current, user_id: params[:id])
+        category.save!
+      end
     end
 
   end
