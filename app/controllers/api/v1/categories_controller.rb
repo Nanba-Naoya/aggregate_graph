@@ -2,6 +2,8 @@ module Api::V1
   class CategoriesController < ApplicationController
     before_action :create_first_category, only: :show
 
+    FIRST_CATEGORY = '会議'.freeze
+
     def show
       @categories = Category.search_category(params[:id])
       render json: @categories
@@ -24,7 +26,7 @@ module Api::V1
     def create_first_category
       #カテゴリがなかったら作る
       if Category.search_category(params[:id]).blank?
-        category = Category.new(title: '会議', user_id: params[:id])
+        category = Category.new(title: FIRST_CATEGORY, user_id: params[:id])
         category.save!
       end
     end

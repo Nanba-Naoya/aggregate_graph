@@ -1,5 +1,7 @@
 module Api::V1
   class WorkTimesController < ApplicationController
+    SEARCH_WORD = '個人作業'.freeze
+    FIRST_CATEGORY =  '会議'.freeze
 
     def index
       work_times = aggregate_time(params[:user_id])
@@ -50,7 +52,7 @@ module Api::V1
         # 全く同じデータは保存しない
         next unless WorkTime.search_same_data(calc_work_time(calendar_data.start.dateTime, calendar_data.end.dateTime), calendar_data.start.dateTime, new_id).blank?
         # 「個人作業」が含まれていなかったら会議として保存
-        if (calendar_data.summary.include?('個人作業') == false && calendar_data.description.include?('個人作業') == false)
+        if (calendar_data.summary.include?(SEARCH_WORD) == false && calendar_data.description.include?(SEARCH_WORD) == false)
           work_times << WorkTime.new(time: calc_work_time(calendar_data.start.dateTime, calendar_data.end.dateTime),
                                     category_id: category_id, created_at: calendar_data.start.dateTime, updated_at: calendar_data.end.dateTime,
                                     user_id: new_id)
@@ -87,7 +89,7 @@ module Api::V1
     end
 
     def check_category_id
-      Category.search_id('会議', params[:user_id])[0]
+      Category.search_id(FIRST_CATEGORY, params[:user_id])[0]
     end
 
     # 業務時間を集計し、返す
