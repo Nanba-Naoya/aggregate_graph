@@ -10,7 +10,7 @@ module Api::V1
 
     def create
       work_time = WorkTime.new(time: hour_add_minute, category_id: params[:category_id], created_at: created_at,
-                              updated_at: Time.current, user_id: params[:user_id])
+                              user_id: params[:user_id])
       work_time.save!
       render json: { message: I18n.t('create_work_time_message'), status: 200 }
     rescue ActiveRecord::RecordInvalid => e
@@ -82,7 +82,7 @@ module Api::V1
         next if (attendee['email'] == calendar_data.creator['email']) == true || (attendee['responseStatus'] == 'declined') == true
         /@/ =~ attendee['email']
         work_time_id = WorkTime.where(category_id: @new_category_id, created_at: calendar_data.start.dateTime, user_id: params[:user_id])[0][:id]
-        users_lists << WorkUsersList.new(user_name: $`,work_time_id: work_time_id, created_at: Time.current, updated_at: Time.current, user_id: params[:user_id])
+        users_lists << WorkUsersList.new(user_name: $`,work_time_id: work_time_id, user_id: params[:user_id])
       end
       WorkUsersList.import users_lists
     end
