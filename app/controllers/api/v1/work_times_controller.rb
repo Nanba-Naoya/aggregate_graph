@@ -26,7 +26,6 @@ module Api::V1
     def import
       calendars_service = GoogleApi::CalendarsService.new
 
-      # 会議のカテゴリーidをとってくる
       access_token = calendars_service.refresh_token(params[:user_id])
       calendar_datas = calendars_service.calendar_api_refresh_token(access_token)
       category_id = check_category_id
