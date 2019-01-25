@@ -17,7 +17,7 @@ module Api::V1
       render json: { message: e.record.errors.full_messages, status: 400 }
     end
 
-    def create_cookie
+    def create_access_token
       calendars_service = GoogleApi::CalendarsService.new
       new_id = calendars_service.create_new_id(params)
       render json: { message: I18n.t('create_user_id'), status: 200, user_id: new_id}

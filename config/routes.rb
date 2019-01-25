@@ -4,7 +4,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :work_times, format: 'json' do
         collection do
-          post :import, :create_cookie
+          post :import, :create_access_token
         end
       end
       resources :categories, only: [:show, :create], format: 'json'
