@@ -41,7 +41,7 @@ Style/Documentation:
 
 # Ruby3系にスムーズに移行するためにtrueにしておく
 Style/FrozenStringLiteralComment:
-  Enabled: false
+  Enabled: true
 
 # %記法の配列の括弧の種類を強制する
 Style/PercentLiteralDelimiters:
