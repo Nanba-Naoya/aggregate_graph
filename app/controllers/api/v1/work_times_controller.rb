@@ -27,7 +27,7 @@ module Api::V1
       calendars_service = GoogleApi::CalendarsService.new
 
       access_token = calendars_service.refresh_token(params[:user_id])
-      calendar_datas = calendars_service.google_calendar_api(access_token)
+      calendar_datas = calendars_service.calendar_data(access_token)
       category_id = check_category_id
 
       # テストの場合の処理

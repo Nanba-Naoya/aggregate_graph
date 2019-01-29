@@ -3,7 +3,7 @@ require 'google/api_client'
 module GoogleApi
   class CalendarsService
 
-    def google_calendar_api(access_token)
+    def calendar_data(access_token)
       access_token = access_token
       client = Google::APIClient.new(application_name: '')
       client.authorization.client_id = ENV['CLIENT_ID']
