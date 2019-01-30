@@ -2,9 +2,14 @@ require 'google/api_client'
 
 module GoogleApi
   class CalendarsService
+    attr_reader :param_data
 
-    def calendar_api_refresh_token(access_token)
-      access_token = access_token
+    def initialize(param_data)
+      @param_data = param_data
+    end
+
+    def calendar_api_refresh_token
+      access_token = refresh_token
       client = Google::APIClient.new(application_name: '')
       client.authorization.client_id = ENV['CLIENT_ID']
       client.authorization.client_secret = ENV['CLIENT_SECRET']
@@ -23,21 +28,21 @@ module GoogleApi
       calendar_result.data.items
     end
 
-    def create_token(params)
+    def create_token
       url = 'https://accounts.google.com/o/oauth2/token'
       uri = URI.parse(url)
       https = Net::HTTP.new(uri.host, uri.port)
       https.use_ssl = true
       oauth_request = Net::HTTP::Post.new(uri.request_uri)
       oauth_request["Content-Type"] = "application/json"
-      oauth_request_params = {code: params[:code], grant_type: 'authorization_code',
+      oauth_request_params = {code: param_data, grant_type: 'authorization_code',
         redirect_uri: 'http://aggregate.nanba.jp:4201', client_secret: ENV['CLIENT_SECRET'], client_id: ENV['CLIENT_ID']}
       oauth_request.body = oauth_request_params.to_json
       oauth_response = https.request(oauth_request)
       response = JSON.parse(oauth_response.body)
     end
 
-    def refresh_token(user_id)
+    def refresh_token
       url = 'https://accounts.google.com/o/oauth2/token'
       uri = URI.parse(url)
       https = Net::HTTP.new(uri.host, uri.port)
@@ -45,7 +50,7 @@ module GoogleApi
       oauth_request = Net::HTTP::Post.new(uri.request_uri)
       oauth_request["Content-Type"] = "application/json"
       oauth_request_params = {grant_type: 'refresh_token',　redirect_uri: 'http://aggregate.nanba.jp:4201',
-        refresh_token: JSON.parse(redis_instance.get(user_id))['refresh_token'], client_secret: ENV['CLIENT_SECRET'], client_id: ENV['CLIENT_ID']}
+        refresh_token: JSON.parse(redis_instance.get(param_data))['refresh_token'], client_secret: ENV['CLIENT_SECRET'], client_id: ENV['CLIENT_ID']}
       oauth_request.body = oauth_request_params.to_json
       oauth_response = https.request(oauth_request)
       response = JSON.parse(oauth_response.body)
@@ -56,9 +61,9 @@ module GoogleApi
       @redis ||= Redis::Namespace.new('calendars', redis: Redis.new(url: ENV['REDIS_SERVERNAME']))
     end
 
-    def create_new_id(params)
+    def create_new_id
       new_id = generate_uuid
-      response = create_token(params)
+      response = create_token
       save_data = {
         refresh_token: response['refresh_token']
       }
