@@ -46,7 +46,7 @@ export class InputDateService {
   }
 
   createCookie(code: string): Observable<string>{
-    const url = `${this.apiEndpoint}/work_times/create_cookie`;
+    const url = `${this.apiEndpoint}/work_times/create_access_token`;
     return this.http.post<string>(url, {code: code});
   }
 
