@@ -17,7 +17,7 @@ module Api::V1
       render json: { message: e.record.errors.full_messages, status: 400 }
     end
 
-    def create_cookie
+    def create_access_token
       calendars_service = GoogleApi::CalendarsService.new
       new_id = calendars_service.create_new_id(params)
       render json: { message: I18n.t('create_user_id'), status: 200, user_id: new_id}
@@ -27,7 +27,7 @@ module Api::V1
       calendars_service = GoogleApi::CalendarsService.new
 
       access_token = calendars_service.refresh_token(params[:user_id])
-      calendar_datas = calendars_service.calendar_api_refresh_token(access_token)
+      calendar_datas = calendars_service.calendar_data(access_token)
       category_id = check_category_id
 
       # テストの場合の処理
