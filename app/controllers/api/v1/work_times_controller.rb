@@ -1,7 +1,7 @@
 module Api::V1
   class WorkTimesController < ApplicationController
     SEARCH_WORD = '個人作業'.freeze
-    FIRST_CATEGORY =  '会議'.freeze
+    FIRST_CATEGORY = '会議'.freeze
 
     def index
       work_times = aggregate_time(params[:user_id])
