@@ -25,10 +25,9 @@ module Api::V1
 
     def create_first_category
       #カテゴリがなかったら作る
-      if Category.search_category(params[:id]).blank?
-        category = Category.new(title: FIRST_CATEGORY, user_id: params[:id])
-        category.save!
-      end
+      return unless Category.search_category(params[:id]).blank?
+      category = Category.new(title: FIRST_CATEGORY, user_id: params[:id])
+      category.save!
     end
 
   end
