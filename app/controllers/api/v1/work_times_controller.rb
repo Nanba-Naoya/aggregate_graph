@@ -28,7 +28,7 @@ module Api::V1
       access_token = calendars_service.refresh_token(params[:user_id])
       calendar_datas = calendars_service.calendar_data(access_token)
       category_id = check_category_id
-      import_self_work_time(import_calendar_datas(calendar_datas, category_id))
+      import_calendar_datas(calendar_datas, category_id)
       render json: { message: I18n.t('seach_google_calendar'), status: 200 , cookie: params[:user_id]}
     rescue => e
       render json: { message: e, status: 500}
@@ -37,9 +37,6 @@ module Api::V1
     private
 
     def import_calendar_datas(calendar_datas, category_id)
-      work_times = []
-      calendar_data_self = []
-
       calendar_datas.each do |calendar_data|
         # カレンダーのデータに終日と本文がない場合はスキップ
         next if !(calendar_data.start.date.nil?) || calendar_data.description.nil?
@@ -47,46 +44,32 @@ module Api::V1
         end_time = calendar_data.end.dateTime
         next if WorkTime.search_same_data(calc_work_time(start_time, end_time), start_time, params[:user_id]).present?
         # 「個人作業」が含まれていなかったら会議として保存
-        calendar_data_self << calendar_data unless decision_include_search_word(calendar_data)
-        work_times << work_time = WorkTime.new(time: calc_work_time(start_time, end_time), category_id: category_id,
-                                               created_at: start_time, updated_at: end_time, user_id: params[:user_id])
+        if decision_include_search_word(calendar_data)
+          work_time = WorkTime.new(time: calc_work_time(start_time, end_time), category_id: category_id,
+                                   created_at: start_time, updated_at: end_time, user_id: params[:user_id])
+        else
+          category = Category.find_or_initialize_by(title: calendar_data.summary, user_id: params[:user_id])
+          category.save! if category.new_record?
+          work_time = WorkTime.new(time: calc_work_time(start_time, end_time), category_id: category.id,
+                                   created_at: start_time, updated_at: end_time,user_id: params[:user_id])
+        end
+        work_time.save!
+        next if calendar_data.attendees.blank?
+        import_attendees(calendar_data, work_time.id)
       end
-      WorkTime.import work_times
-      calendar_data_self
     end
 
     def decision_include_search_word(calendar_data)
       return true if (calendar_data.summary.include?(SEARCH_WORD) == false && calendar_data.description.include?(SEARCH_WORD) == false)
     end
 
-    # 個人作業」が含まれていた場合は新しいカテゴリとして保存し、業務時間を保存、user_listを保存
-    def import_self_work_time(calendar_datas)
-      self_work_time = []
-      attendees = []
-
-      calendar_datas.each do |calendar_data|
-        start_time = calendar_data.start.dateTime
-        end_time = calendar_data.end.dateTime
-        category = Category.find_or_initialize_by(title: calendar_data.summary, user_id: params[:user_id])
-        category.save! if category.new_record?
-        @new_category_id = Category.search_id(calendar_data.summary, params[:user_id])[0]
-        self_work_time << WorkTime.new(time: calc_work_time(start_time, end_time), category_id: @new_category_id,
-                                       created_at: start_time, updated_at: end_time,user_id: params[:user_id])
-        next if calendar_data.attendees.blank?
-        attendees << calendar_data.attendees
-      end
-      WorkTime.import self_work_time
-      import_attendees(attendees)
-    end
-
-    def import_attendees(attendees)
+    def import_attendees(calendar_data, work_time_id)
       users_lists = []
 
-      attendees.each do |attendee|
+      calendar_data.attendees.each do |attendee|
         # 自分以外を保存、/@/ =~ attendee['email'] -> @を探して@以前を抽出
         next if (attendee['email'] == calendar_data.creator['email']) == true || (attendee['responseStatus'] == 'declined') == true
         /@/ =~ attendee['email']
-        work_time_id = WorkTime.where(category_id: @new_category_id, created_at: calendar_data.start.dateTime, user_id: params[:user_id])[0][:id]
         users_lists << WorkUsersList.new(user_name: $`,work_time_id: work_time_id, user_id: params[:user_id])
       end
       WorkUsersList.import users_lists
