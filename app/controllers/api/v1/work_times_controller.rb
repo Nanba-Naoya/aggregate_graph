@@ -43,8 +43,8 @@ module Api::V1
       calendar_datas.each do |calendar_data|
         # カレンダーのデータに終日と本文がない場合はスキップ
         next if !(calendar_data.start.date.nil?) || calendar_data.description.nil?
-        start_time = Rails.env == 'test' ? calendar_data[:start][:dateTime] : calendar_data.start.dateTime
-        end_time = Rails.env == 'test' ? calendar_data[:end][:dateTime] : calendar_data.end.dateTime
+        start_time = calendar_data.start.dateTime
+        end_time = calendar_data.end.dateTime
         next if WorkTime.search_same_data(calc_work_time(start_time, end_time), start_time, params[:user_id]).present?
         # 「個人作業」が含まれていなかったら会議として保存
         calendar_data_self << calendar_data unless decision_include_search_word(calendar_data)
@@ -65,8 +65,8 @@ module Api::V1
       attendees = []
 
       calendar_datas.each do |calendar_data|
-        start_time = Rails.env == 'test' ? calendar_data[:start][:dateTime] : calendar_data.start.dateTime
-        end_time = Rails.env == 'test' ? calendar_data[:end][:dateTime] : calendar_data.end.dateTime
+        start_time = calendar_data.start.dateTime
+        end_time = calendar_data.end.dateTime
         category = Category.find_or_initialize_by(title: calendar_data.summary, user_id: params[:user_id])
         category.save! if category.new_record?
         @new_category_id = Category.search_id(calendar_data.summary, params[:user_id])[0]
