@@ -7,7 +7,7 @@ module GoogleApi
       @params = params
     end
 
-    def calendar_api_refresh_token
+    def calendar_data
       access_token = refresh_token
       client = Google::APIClient.new(application_name: '')
       client.authorization.client_id = ENV['CLIENT_ID']

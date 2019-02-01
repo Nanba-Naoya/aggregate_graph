@@ -1,7 +1,7 @@
 module Api::V1
   class WorkTimesController < ApplicationController
     SEARCH_WORD = '個人作業'.freeze
-    FIRST_CATEGORY =  '会議'.freeze
+    FIRST_CATEGORY = '会議'.freeze
 
     def index
       work_times = aggregate_time(params[:user_id])
@@ -17,7 +17,7 @@ module Api::V1
       render json: { message: e.record.errors.full_messages, status: 400 }
     end
 
-    def create_cookie
+    def create_access_token
       calendars_service = GoogleApi::CalendarsService.new(params)
       new_id = calendars_service.create_new_id
       render json: { message: I18n.t('create_user_id'), status: 200, user_id: new_id}
@@ -25,7 +25,7 @@ module Api::V1
 
     def import
       calendars_service = GoogleApi::CalendarsService.new(params)
-      calendar_datas = calendars_service.calendar_api_refresh_token
+      calendar_datas = calendars_service.calendar_data
       category_id = check_category_id
 
       # テストの場合の処理
