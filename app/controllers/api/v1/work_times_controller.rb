@@ -18,13 +18,13 @@ module Api::V1
     end
 
     def create_cookie
-      calendars_service = GoogleApi::CalendarsService.new(params[:code])
+      calendars_service = GoogleApi::CalendarsService.new(params)
       new_id = calendars_service.create_new_id
       render json: { message: I18n.t('create_user_id'), status: 200, user_id: new_id}
     end
 
     def import
-      calendars_service = GoogleApi::CalendarsService.new(params[:user_id])
+      calendars_service = GoogleApi::CalendarsService.new(params)
       calendar_datas = calendars_service.calendar_api_refresh_token
       category_id = check_category_id
 

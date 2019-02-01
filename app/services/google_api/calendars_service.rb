@@ -2,10 +2,9 @@ require 'google/api_client'
 
 module GoogleApi
   class CalendarsService
-    attr_reader :param_data
 
-    def initialize(param_data)
-      @param_data = param_data
+    def initialize(params)
+      @params = params
     end
 
     def calendar_api_refresh_token
@@ -35,7 +34,7 @@ module GoogleApi
       https.use_ssl = true
       oauth_request = Net::HTTP::Post.new(uri.request_uri)
       oauth_request["Content-Type"] = "application/json"
-      oauth_request_params = {code: param_data, grant_type: 'authorization_code',
+      oauth_request_params = {code: @params[:code], grant_type: 'authorization_code',
         redirect_uri: 'http://aggregate.nanba.jp:4201', client_secret: ENV['CLIENT_SECRET'], client_id: ENV['CLIENT_ID']}
       oauth_request.body = oauth_request_params.to_json
       oauth_response = https.request(oauth_request)
@@ -50,7 +49,7 @@ module GoogleApi
       oauth_request = Net::HTTP::Post.new(uri.request_uri)
       oauth_request["Content-Type"] = "application/json"
       oauth_request_params = {grant_type: 'refresh_token',　redirect_uri: 'http://aggregate.nanba.jp:4201',
-        refresh_token: JSON.parse(redis_instance.get(param_data))['refresh_token'], client_secret: ENV['CLIENT_SECRET'], client_id: ENV['CLIENT_ID']}
+        refresh_token: JSON.parse(redis_instance.get(@params[:user_id]))['refresh_token'], client_secret: ENV['CLIENT_SECRET'], client_id: ENV['CLIENT_ID']}
       oauth_request.body = oauth_request_params.to_json
       oauth_response = https.request(oauth_request)
       response = JSON.parse(oauth_response.body)
