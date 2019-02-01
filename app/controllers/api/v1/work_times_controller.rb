@@ -37,25 +37,27 @@ module Api::V1
     private
 
     def import_calendar_datas(calendar_datas, category_id)
-      calendar_datas.each do |calendar_data|
-        # カレンダーのデータに終日と本文がない場合はスキップ
-        next if !(calendar_data.start.date.nil?) || calendar_data.description.nil?
-        start_time = calendar_data.start.dateTime
-        end_time = calendar_data.end.dateTime
-        next if WorkTime.search_same_data(calc_work_time(start_time, end_time), start_time, params[:user_id]).present?
-        # 「個人作業」が含まれていなかったら会議として保存
-        if decision_include_search_word(calendar_data)
-          work_time = WorkTime.new(time: calc_work_time(start_time, end_time), category_id: category_id,
-                                   created_at: start_time, updated_at: end_time, user_id: params[:user_id])
-        else
-          category = Category.find_or_initialize_by(title: calendar_data.summary, user_id: params[:user_id])
-          category.save! if category.new_record?
-          work_time = WorkTime.new(time: calc_work_time(start_time, end_time), category_id: category.id,
-                                   created_at: start_time, updated_at: end_time,user_id: params[:user_id])
+      ActiveRecord::Base.transaction do
+        calendar_datas.each do |calendar_data|
+          # カレンダーのデータに終日と本文がない場合はスキップ
+          next if !(calendar_data.start.date.nil?) || calendar_data.description.nil?
+          start_time = calendar_data.start.dateTime
+          end_time = calendar_data.end.dateTime
+          next if WorkTime.search_same_data(calc_work_time(start_time, end_time), start_time, params[:user_id]).present?
+          # 「個人作業」が含まれていなかったら会議として保存
+          if decision_include_search_word(calendar_data)
+            work_time = WorkTime.new(time: calc_work_time(start_time, end_time), category_id: category_id,
+                                      created_at: start_time, updated_at: end_time, user_id: params[:user_id])
+          else
+            category = Category.find_or_initialize_by(title: calendar_data.summary, user_id: params[:user_id])
+            category.save! if category.new_record?
+            work_time = WorkTime.new(time: calc_work_time(start_time, end_time), category_id: category.id,
+                                      created_at: start_time, updated_at: end_time,user_id: params[:user_id])
+          end
+          work_time.save!
+          next if calendar_data.attendees.blank? || decision_include_search_word(calendar_data)
+          import_attendees(calendar_data, work_time.id)
         end
-        work_time.save!
-        next if calendar_data.attendees.blank?
-        import_attendees(calendar_data, work_time.id)
       end
     end
 
@@ -72,7 +74,12 @@ module Api::V1
         /@/ =~ attendee['email']
         users_lists << WorkUsersList.new(user_name: $`,work_time_id: work_time_id, user_id: params[:user_id])
       end
-      WorkUsersList.import users_lists
+      ActiveRecord::Base.transaction do
+        result = WorkUsersList.import users_lists
+        if !result.faild_instance.blank?
+          raise
+        end
+      end
     end
 
     def check_category_id
