@@ -108,8 +108,7 @@ module Api::V1
 
     # 1桁のものに０をつける
     def change_time(times)
-      return times unless times.to_i <= 9
-      "0#{times}"
+      sprintf('%02d', times)
     end
 
     # 時間と分を足す
