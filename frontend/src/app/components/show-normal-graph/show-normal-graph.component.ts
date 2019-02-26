@@ -27,15 +27,9 @@ export class ShowNormalGraphComponent implements OnInit {
               private toastr: ToastrService) {}
 
   ngOnInit() {
-    if (this.cookieService.get('user_id') == ''){
+    if (this.cookieService.get('user_id') == '' || this.cookieService.get('user_id') == 'undefined'){
+      this.cookieService.deleteAll();
       window.location.href = this.googleUrl
-    }
-  }
-
-  onReceiveMonth(eventData) {
-    if (eventData !== null){
-      this.change = false
-      this.month = eventData
     }
   }
 
@@ -45,29 +39,15 @@ export class ShowNormalGraphComponent implements OnInit {
   }
 
   onCreateParams(){
-    if (this.day == undefined || this.day == 'null'){
-      var month_params = { month: this.month , type_flag: false, user_id: this.cookieService.get('user_id')}
-      return month_params
-    } else {
-      var day_params = { month: this.month , day: this.day, type_flag: false, user_id: this.cookieService.get('user_id')}
-      return day_params
-    }
+    var day_params = { day: this.day, type_flag: false, user_id: this.cookieService.get('user_id')}
+    return day_params
   }
 
   onShowGraph(){
-    if (this.month !== undefined){
+    this.change = false;
+    if (this.day !== undefined){
       this.showGraphService.getWorkTimes(this.onCreateParams()).subscribe((response) => {
         this.data = response;
-        this.showGraphService.getUsrsLists(this.onCreateParams()).subscribe((response)=> {
-          this.users = response;
-          
-          var users_lists = [];
-          for (var item in this.users){
-            users_lists.push(item+ ' : '+ this.users[item])
-          }
-          this.names = users_lists
-
-        })
         if (this.data['status'] == 404){
           this.toastr.error(this.data['message']);
         } else {

@@ -31,15 +31,15 @@ export class ShowCategoryGraphComponent implements OnInit {
               private cookieService: CookieService,
               private toastr: ToastrService) {
     this.form = new FormGroup({
-      month: new FormControl(),
       day: new FormControl(),
       type_flag: new FormControl(),
       user_id: new FormControl()
     });
-   }
+  }
 
   ngOnInit() {
-    if (this.cookieService.get('user_id') == ''){
+    if (this.cookieService.get('user_id') == '' || this.cookieService.get('user_id') == 'undefined'){
+      this.cookieService.deleteAll();
       window.location.href = this.googleUrl
     }
     this.form['user_id'] = this.cookieService.get('user_id')
@@ -53,14 +53,6 @@ export class ShowCategoryGraphComponent implements OnInit {
     }
   }
 
-  onReceiveMonth(eventData) {
-    if (eventData !== null){
-      this.change = false
-      this.month = eventData;
-      this.form['month'] = eventData
-    }
-  }
-
   onReceiveDay(eventData) {
     this.change = false
     this.day = eventData;
@@ -68,20 +60,17 @@ export class ShowCategoryGraphComponent implements OnInit {
   }
 
   onShowGraph(){
+    if(this.form['day'] == undefined){
+      this.toastr.error('表示する期間を選択してください。');
+    }
+    if(this.form['category_id'] == undefined){
+      this.toastr.error('カテゴリを選択してください。');
+    }
+    this.change = false;
     this.form['type_flag'] = 'category'
-    if (this.form['category_id'] !== undefined && this.form['month'] !== undefined){
+    if (this.form['category_id'] !== undefined && this.form['day'] !== undefined){
       this.showGraphService.getWorkTimes(this.form).subscribe((response) => {
         this.data = response;
-        this.showGraphService.getUsrsLists(this.form).subscribe((response)=> {
-          this.users = response;
-          
-          var users_lists = [];
-          for (var item in this.users){
-            users_lists.push(this.users[item])
-          }
-          this.names = users_lists
-
-        })
         if (this.data['status'] == 404){
           this.toastr.error(this.data['message']);
         } else {

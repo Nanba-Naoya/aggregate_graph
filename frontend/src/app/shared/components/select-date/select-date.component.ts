@@ -4,6 +4,10 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { ShowGraphService } from '../../../components/services/show-graph.service';
 import { Category } from '../../../components/category';
 import { CookieService } from 'ngx-cookie-service';
+declare function require(x: string): any;
+import flatpickr from "flatpickr";
+const ja = require("flatpickr/dist/l10n/ja").default.ja;
+flatpickr.localize(ja);
 
 @Component({
   selector: 'app-select-date',
@@ -21,36 +25,29 @@ export class SelectDateComponent implements OnInit {
   change = false;
   @Input() category_flag;
   @Output() eventCategory_id = new EventEmitter<String>();
-  @Output() eventMonth = new EventEmitter<String>();
   @Output() eventDay = new EventEmitter<String>();
 
   constructor(private showGraphService: ShowGraphService,
-              private cookieService: CookieService) { 
+              private cookieService: CookieService) {
     this.form = new FormGroup({
       category: new FormControl(),
-      month: new FormControl(),
-      day: new FormControl(),
+      calendar: new FormControl(),
     });
   }
 
   ngOnInit() {
     if (this.category_flag){
-      this.showGraphService.getCategories(this.cookieService.get('user_id')).subscribe((response) => {
+      this.showGraphService.getCategories().subscribe((response) => {
         this.categories = response;
       })
     }
+    flatpickr("#myInput", {
+      mode: 'range',
+    });
   }
 
   onSelectCategory($event){
     this.eventCategory_id.emit($event.target.value)
-  }
-
-  onChangeMonth($event){
-    this.max_day = new Date(this.year, $event.target.value, 0).getDate()
-    for (var i = 0; i < this.max_day; i++){
-      this.all_day[i] = i + 1;
-    }
-    this.eventMonth.emit($event.target.value)
   }
 
   onChangeday($event){
