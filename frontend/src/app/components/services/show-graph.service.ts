@@ -15,19 +15,14 @@ export class ShowGraphService {
 
   constructor(private http: HttpClient) { }
 
-  getCategories(user_id): Observable<Category> {
-    const url = `${this.apiEndpoint}/categories/${user_id}`;
+  getCategories(): Observable<Category> {
+    const url = `${this.apiEndpoint}/categories`;
     return this.http.get<Category>(url);
   }
 
   getWorkTimes(params: {}): Observable<WorkTime> {
     const url = `${this.apiEndpoint}/work_times`;
     return this.http.get<WorkTime>(url, {params: params});
-  }
-
-  getUsrsLists(params: {}): Observable<Category> {
-    const url = `${this.apiEndpoint}/work_users_lists`;
-    return this.http.get<Category>(url, {params: params});
   }
 
 }
